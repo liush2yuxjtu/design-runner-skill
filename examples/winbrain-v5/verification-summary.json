@@ -10,7 +10,8 @@
   "interactionLayersAdded": 158,
   "designVariableDefinitions": 22,
   "layoutProblems": 0,
-  "maxMeanAbsolutePixelDifference": 0.1783,
+  "maxMeanAbsolutePixelDifferenceOn255Scale": 0.1783,
+  "pixelDifferenceScale": 255,
   "prototypeCapabilities": {
     "ardotRemoteMotionWrite": false,
     "ardotRemotePrototypeWrite": false,

@@ -31,7 +31,7 @@ Ardot 文件：<https://ardot.tencent.com/file/719360850014780>
 6. 专家工作台
 7. API 控制台
 
-路由连接器覆盖首页到 AI 对话、专家团、项目和数据本体，专家团与专家工作台的往返，以及专家工作台到 API 控制台。
+路由连接器覆盖首页到 AI 对话、专家团、项目和数据本体，专家团与专家工作台的往返，以及专家工作台到 API 控制台。其中“专家团 ↔ 专家工作台”按一个双向连接器计数，因此总数为 6。
 
 ## 交互语义层
 
@@ -89,7 +89,8 @@ overview → 数据本体 → 项目·专家 → 应用层 → overview
 1. [Figma Sites interactions](https://help.figma.com/hc/en-us/articles/35895820755095-Figma-Sites-collection-Add-interactions-to-a-website)
 2. [Figma Sites Code Layers](https://help.figma.com/hc/en-us/articles/31242824165143-Guide-to-code-layers-in-Figma-Sites)
 3. [Figma prototype scrolling](https://help.figma.com/hc/en-us/articles/360039818734-Prototype-scroll-and-overflow-behavior)
-4. [Figma MCP write to canvas](https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/)
+4. [Figma Smart Animate](https://help.figma.com/hc/en-us/articles/360039818874-Smart-animate-layers-between-frames)
+5. [Figma MCP write to canvas](https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/)
 
 ## 过程教训
 
