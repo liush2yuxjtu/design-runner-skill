@@ -1,0 +1,34 @@
+{
+  "caseStudy": "WinBrain V5 Ardot unified product flow",
+  "ardotUrl": "https://ardot.tencent.com/file/719360850014780",
+  "pageCount": 1,
+  "screenRoots": 7,
+  "routeConnectors": 6,
+  "interactionContainers": 7,
+  "semanticHotspots": 131,
+  "interactionSpecLayers": 20,
+  "interactionLayersAdded": 158,
+  "designVariableDefinitions": 22,
+  "layoutProblems": 0,
+  "maxMeanAbsolutePixelDifference": 0.1783,
+  "prototypeCapabilities": {
+    "ardotRemoteMotionWrite": false,
+    "ardotRemotePrototypeWrite": false,
+    "figmaDesignScrolling": true,
+    "figmaSitesScrollTransform": true,
+    "figmaSitesCodeLayers": true,
+    "figmaMcpSitesInteractionWriteVerified": false
+  },
+  "scrollWorld": {
+    "stages": [
+      "overview",
+      "data-foundation",
+      "projects-and-experts",
+      "application-layer",
+      "overview"
+    ],
+    "pin": true,
+    "scrub": 0.9,
+    "scrollDistanceInViewportHeights": 5.2
+  }
+}

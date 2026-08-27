@@ -102,6 +102,18 @@ Files:
 
 The prototype uses no remote requests. The public demo video is recorded from the same file.
 
+## WinBrain V5 单画布案例
+
+这个案例把 7 个 Web 原型屏幕整理到一个 Ardot Page，增加 6 个路由连接器、131 个语义 Hotspot 和 20 个交互规格图层，同时记录 Ardot Remote 与 Figma Sites 的运动能力边界。
+
+[![WinBrain V5 unified product flow](examples/winbrain-v5/winbrain-unified-flow.png)](examples/winbrain-v5/README.md)
+
+文件：
+
+- [`examples/winbrain-v5/README.md`](examples/winbrain-v5/README.md)，完整案例报告
+- [`examples/winbrain-v5/verification-summary.json`](examples/winbrain-v5/verification-summary.json)，机器可读验证摘要
+- [`examples/winbrain-v5/interaction-layer-spec.png`](examples/winbrain-v5/interaction-layer-spec.png)，131 个 Hotspot 的分布说明
+
 ## Repository layout
 
 ```text
