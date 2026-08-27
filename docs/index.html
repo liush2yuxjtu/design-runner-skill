@@ -1,726 +1,726 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Design Runner keeps Figma-grade design workflows portable across Ardot, Penpot, Figma, and local files."
-    />
-    <meta name="theme-color" content="#07111f" />
-    <title>Design Runner · portable design workflows</title>
-    <style>
-      :root {
-        --ink: #07111f;
-        --paper: #f5f2e9;
-        --blue: #2f66ff;
-        --lime: #c8ff4d;
-        --line: rgba(7, 17, 31, 0.16);
-        --muted: #5d6876;
-        --card: rgba(255, 255, 255, 0.74);
-        --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", monospace;
-        --display: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        margin: 0;
-        color: var(--ink);
-        background:
-          linear-gradient(var(--line) 1px, transparent 1px),
-          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
-        background-size: 44px 44px;
-        font-family: var(--mono);
-      }
-      a {
-        color: inherit;
-      }
-      button,
-      a {
-        -webkit-tap-highlight-color: transparent;
-      }
-      .skip {
-        position: fixed;
-        left: 16px;
-        top: -80px;
-        z-index: 20;
-        background: var(--lime);
-        padding: 12px;
-      }
-      .skip:focus {
-        top: 16px;
-      }
-      .shell {
-        width: min(1180px, calc(100% - 40px));
-        margin: auto;
-      }
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 76px;
-        border-bottom: 1px solid var(--ink);
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-decoration: none;
-        font-weight: 800;
-        letter-spacing: -0.04em;
-      }
-      .mark {
-        width: 22px;
-        height: 22px;
-        background: var(--blue);
-        position: relative;
-      }
-      .mark::after {
-        content: "";
-        position: absolute;
-        inset: 6px -8px 6px 8px;
-        background: var(--lime);
-      }
-      .nav-links {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-        font-size: 13px;
-      }
-      .nav-links a {
-        text-decoration: none;
-      }
-      .nav-links a:hover {
-        text-decoration: underline;
-        text-underline-offset: 5px;
-      }
-      .pill {
-        border: 1px solid var(--ink);
-        border-radius: 999px;
-        padding: 9px 14px;
-        background: var(--lime);
-        font-weight: 800;
-      }
-      .hero {
-        min-height: 690px;
-        display: grid;
-        grid-template-columns: 1.08fr 0.92fr;
-        gap: 72px;
-        align-items: center;
-      }
-      .eyebrow {
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--blue);
-      }
-      h1,
-      h2,
-      h3 {
-        font-family: var(--display);
-        font-weight: 700;
-        margin: 0;
-      }
-      h1 {
-        font-size: clamp(58px, 8vw, 112px);
-        line-height: 0.82;
-        letter-spacing: -0.075em;
-        margin: 28px 0 30px;
-        max-width: 800px;
-      }
-      h1 em {
-        color: var(--blue);
-        font-style: normal;
-      }
-      .lede {
-        max-width: 700px;
-        font: 20px/1.55 var(--display);
-        color: #283545;
-      }
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 34px;
-      }
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 48px;
-        padding: 0 20px;
-        border: 1px solid var(--ink);
-        text-decoration: none;
-        font-weight: 800;
-        background: var(--ink);
-        color: white;
-      }
-      .button.alt {
-        background: transparent;
-        color: var(--ink);
-      }
-      .button:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 4px 4px 0 var(--blue);
-      }
-      .terminal {
-        background: var(--ink);
-        color: #d8e2f0;
-        border: 1px solid var(--ink);
-        box-shadow: 16px 16px 0 var(--blue);
-      }
-      .terminal-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #314052;
-        padding: 14px 18px;
-        color: #92a2b6;
-        font-size: 12px;
-      }
-      .dots {
-        letter-spacing: 5px;
-        color: var(--lime);
-      }
-      pre {
-        margin: 0;
-        overflow: auto;
-        padding: 24px;
-        font: 13px/1.7 var(--mono);
-        white-space: pre-wrap;
-      }
-      .copy {
-        border: 1px solid #53637a;
-        background: transparent;
-        color: white;
-        font: inherit;
-        padding: 6px 10px;
-        cursor: pointer;
-      }
-      .copy:hover,
-      .copy:focus-visible {
-        border-color: var(--lime);
-        color: var(--lime);
-      }
-      .metrics {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border: 1px solid var(--ink);
-        background: var(--paper);
-      }
-      .metric {
-        padding: 24px;
-        border-right: 1px solid var(--ink);
-      }
-      .metric:last-child {
-        border-right: 0;
-      }
-      .metric strong {
-        display: block;
-        font: 48px/1 var(--display);
-        color: var(--blue);
-      }
-      .metric span {
-        display: block;
-        margin-top: 10px;
-        font-size: 12px;
-      }
-      section {
-        padding: 110px 0;
-      }
-      .section-head {
-        display: grid;
-        grid-template-columns: 0.72fr 1.28fr;
-        gap: 60px;
-        align-items: end;
-        margin-bottom: 48px;
-      }
-      h2 {
-        font-size: clamp(42px, 6vw, 76px);
-        line-height: 0.95;
-        letter-spacing: -0.055em;
-      }
-      .section-copy {
-        color: var(--muted);
-        line-height: 1.7;
-        max-width: 630px;
-      }
-      .flow-card {
-        background: #fff;
-        border: 1px solid var(--ink);
-        padding: 28px;
-        overflow: hidden;
-      }
-      .flow-line {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(145px, 1fr));
-        gap: 42px;
-        min-width: 900px;
-        align-items: center;
-      }
-      .flow-node {
-        position: relative;
-        border: 1px solid var(--ink);
-        padding: 18px;
-        min-height: 110px;
-        background: #fff;
-      }
-      .flow-node:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        width: 43px;
-        height: 2px;
-        background: var(--blue);
-        right: -43px;
-        top: 54px;
-      }
-      .flow-node:not(:last-child)::before {
-        content: "";
-        position: absolute;
-        right: -43px;
-        top: 48px;
-        border-left: 12px solid var(--blue);
-        border-top: 7px solid transparent;
-        border-bottom: 7px solid transparent;
-        z-index: 2;
-      }
-      .flow-node b {
-        display: block;
-        margin-bottom: 18px;
-      }
-      .flow-node span {
-        color: var(--muted);
-        font-size: 11px;
-        line-height: 1.5;
-      }
-      .providers {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        border: 1px solid var(--ink);
-      }
-      .provider {
-        min-height: 230px;
-        padding: 24px;
-        border-right: 1px solid var(--ink);
-        background: var(--card);
-      }
-      .provider:last-child {
-        border-right: 0;
-      }
-      .provider code {
-        color: var(--blue);
-      }
-      .provider p {
-        color: var(--muted);
-        line-height: 1.6;
-        font-size: 12px;
-        margin-top: 46px;
-      }
-      .orbit {
-        background: var(--ink);
-        color: #eef4ff;
-        margin-top: 70px;
-        padding: 100px 0;
-      }
-      .orbit .section-copy {
-        color: #aebbd0;
-      }
-      .proof {
-        display: grid;
-        gap: 24px;
-      }
-      .proof img,
-      .proof video {
-        display: block;
-        width: 100%;
-        background: #fff;
-        border: 1px solid #60708a;
-      }
-      .proof video {
-        aspect-ratio: 16 / 9;
-        object-fit: contain;
-        background: #030912;
-      }
-      .proof-caption {
-        display: flex;
-        justify-content: space-between;
-        gap: 24px;
-        color: #aebbd0;
-        font-size: 12px;
-      }
-      .install-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
-      }
-      .install-card {
-        min-width: 0;
-        border: 1px solid var(--ink);
-        background: #fff;
-        padding: 26px;
-      }
-      .install-card h3 {
-        font-size: 28px;
-        margin-bottom: 18px;
-      }
-      .install-card pre {
-        background: #eef2f7;
-        color: var(--ink);
-        border: 1px solid var(--line);
-        padding: 18px;
-        min-height: 152px;
-      }
-      .guard {
-        border: 1px solid var(--ink);
-        background: var(--lime);
-        padding: 34px;
-        display: grid;
-        grid-template-columns: 0.7fr 1.3fr;
-        gap: 40px;
-        align-items: center;
-      }
-      .guard h3 {
-        font-size: 36px;
-      }
-      .guard p {
-        line-height: 1.7;
-        margin: 0;
-      }
-      footer {
-        border-top: 1px solid var(--ink);
-        padding: 30px 0 50px;
-        font-size: 11px;
-        color: var(--muted);
-      }
-      .footer-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        flex-wrap: wrap;
-      }
-      @media (max-width: 900px) {
-        .hero,
-        .section-head,
-        .install-grid,
-        .guard {
-          grid-template-columns: 1fr;
-        }
-        .hero {
-          padding: 90px 0;
-          min-height: auto;
-        }
-        .metrics {
-          grid-template-columns: 1fr 1fr;
-        }
-        .metric:nth-child(2) {
-          border-right: 0;
-        }
-        .metric:nth-child(-n + 2) {
-          border-bottom: 1px solid var(--ink);
-        }
-        .providers {
-          grid-template-columns: 1fr;
-        }
-        .provider {
-          border-right: 0;
-          border-bottom: 1px solid var(--ink);
-          min-height: auto;
-        }
-        .provider:last-child {
-          border-bottom: 0;
-        }
-        .provider p {
-          margin-top: 18px;
-        }
-      }
-      @media (max-width: 620px) {
-        .nav-links a:not(.pill) {
-          display: none;
-        }
-        h1 {
-          font-size: 62px;
-        }
-        .metrics {
-          grid-template-columns: 1fr;
-        }
-        .metric,
-        .metric:nth-child(2) {
-          border-right: 0;
-          border-bottom: 1px solid var(--ink);
-        }
-        .metric:last-child {
-          border-bottom: 0;
-        }
-        section {
-          padding: 78px 0;
-        }
-        .proof-caption {
-          display: block;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        html {
-          scroll-behavior: auto;
-        }
-        .button:hover {
-          transform: none;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <header class="shell nav">
-      <a class="brand" href="#top" aria-label="Design Runner home"
-        ><span class="mark" aria-hidden="true"></span>DESIGN RUNNER</a
-      >
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#workflow">Workflow</a><a href="#orbit">Orbit proof</a
-        ><a href="#install">Install</a>
-        <a
-          class="pill"
-          href="https://github.com/liush2yuxjtu/design-runner-skill"
-          >GitHub</a
-        >
-      </nav>
-    </header>
-    <main id="main">
-      <section class="shell hero" id="top">
-        <div>
-          <div class="eyebrow">portable design operations</div>
-          <h1>Keep the workflow.<br /><em>Swap the runner.</em></h1>
-          <p class="lede">
-            Design Runner maps one design process to Ardot, Penpot, Figma, or
-            local files. Cloud access, desktop apps, and write operations stay
-            blocked until policy allows them.
-          </p>
-          <div class="actions">
-            <a class="button" href="#install">Install the skill</a
-            ><a class="button alt" href="#orbit">Watch Orbit demo</a>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Runner — one workflow, any design tool</title>
+<meta name="description" content="Design Runner separates workflow from provider. Resolve capabilities, apply fail-closed policy, and route Figma, Ardot, Penpot, or local files without rewriting the work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,800&family=Instrument+Serif:ital@1&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE4;
+    --paper-hi:#FAF7EF;
+    --ink:#1A160F;
+    --ink-soft:#4A443A;
+    --line:rgba(26,22,15,.18);
+    --line-strong:rgba(26,22,15,.55);
+    --accent:#DE4700;
+    --accent-deep:#A93A02;
+    --dark:#14110B;
+    --dark-line:rgba(243,239,228,.16);
+    --mono:'Spline Sans Mono',ui-monospace,monospace;
+    --disp:'Bricolage Grotesque',sans-serif;
+    --serif:'Instrument Serif',serif;
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;overflow-x:clip}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--disp);
+    font-weight:400;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;background:var(--grain);
+    pointer-events:none;z-index:60;mix-blend-mode:multiply;
+  }
+  ::selection{background:var(--accent);color:var(--paper)}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* ---------- ticker ---------- */
+  .ticker{
+    border-bottom:1px solid var(--line-strong);
+    overflow:hidden;white-space:nowrap;background:var(--paper);
+    position:relative;z-index:5;
+  }
+  .ticker-track{display:inline-block;padding:.5rem 0;animation:tick 60s linear infinite}
+  .ticker span{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .ticker b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.85rem;margin:0 .9rem;color:var(--accent-deep)}
+  @keyframes tick{to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+
+  /* ---------- masthead ---------- */
+  header.masthead{
+    display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;
+    padding:1.1rem clamp(1rem,4vw,3rem);
+    border-bottom:1px solid var(--line-strong);
+    position:sticky;top:0;background:var(--paper);z-index:50;
+  }
+  .mark{font-weight:800;font-size:1.05rem;letter-spacing:-.02em;text-decoration:none;display:flex;align-items:center;gap:.55rem}
+  .mark i{
+    width:.85rem;height:.85rem;background:var(--accent);display:inline-block;
+    clip-path:polygon(0 0,100% 0,100% 66%,66% 100%,0 100%);
+  }
+  nav{margin-left:auto;display:flex;gap:1.4rem;flex-wrap:wrap}
+  nav a{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+    text-decoration:none;color:var(--ink-soft);padding-bottom:.15rem;border-bottom:1px solid transparent;
+  }
+  nav a:hover{color:var(--accent-deep);border-color:var(--accent-deep)}
+  .rev{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;color:var(--ink-soft)}
+
+  /* ---------- shared section chrome ---------- */
+  main{max-width:1240px;margin:0 auto;padding:0 clamp(1rem,4vw,3rem)}
+  section{position:relative;padding:clamp(3.5rem,8vw,7rem) 0}
+  .sec-head{
+    display:flex;align-items:baseline;gap:1.2rem;
+    border-top:1px solid var(--line-strong);padding-top:.8rem;margin-bottom:clamp(1.8rem,4vw,3.2rem);
+  }
+  .sec-head .no{
+    font-family:var(--mono);font-size:.75rem;letter-spacing:.2em;color:var(--accent-deep);
+  }
+  .sec-head h2{
+    font-weight:800;font-size:clamp(1.35rem,3vw,2rem);letter-spacing:-.03em;text-transform:uppercase;
+  }
+  .sec-head .tag{margin-left:auto;font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:1rem}
+
+  /* ---------- hero ---------- */
+  .hero{padding-top:clamp(2.5rem,6vw,5rem);padding-bottom:0}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:clamp(2rem,4vw,4rem);align-items:end}
+  h1{
+    font-weight:800;
+    font-size:clamp(2.9rem,8.2vw,6.8rem);
+    line-height:.94;letter-spacing:-.045em;text-transform:uppercase;
+  }
+  h1 .out{
+    color:transparent;-webkit-text-stroke:2px var(--ink);
+  }
+  h1 em{
+    font-family:var(--serif);font-style:italic;font-weight:400;text-transform:none;
+    letter-spacing:-.01em;color:var(--accent-deep);
+  }
+  .hero-copy{max-width:52ch;margin-top:2rem;font-size:clamp(1rem,1.4vw,1.15rem);color:var(--ink-soft)}
+  .hero-copy strong{color:var(--ink);font-weight:600}
+  .cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:2.2rem}
+  .btn{
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+    padding:.85rem 1.4rem;text-decoration:none;border:1px solid var(--ink);
+    transition:background .18s,color .18s,border-color .18s;
+  }
+  .btn-solid{background:var(--ink);color:var(--paper)}
+  .btn-solid:hover{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper)}
+
+  /* stat rail under hero */
+  .stat-rail{
+    margin-top:clamp(2.5rem,6vw,4.5rem);
+    display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-strong);
+  }
+  .stat{padding:1.2rem 1.2rem 1.2rem 0;border-right:1px dashed var(--line)}
+  .stat:last-child{border-right:none}
+  .stat b{display:block;font-weight:800;font-size:clamp(1.7rem,3.4vw,2.6rem);letter-spacing:-.03em;line-height:1}
+  .stat b sup{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.45em;color:var(--accent-deep)}
+  .stat span{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* ---------- console ---------- */
+  .console{
+    background:var(--paper-hi);border:1px solid var(--line-strong);
+    box-shadow:8px 8px 0 rgba(26,22,15,.12);
+  }
+  .console-bar{
+    display:flex;align-items:center;gap:.6rem;padding:.65rem 1rem;border-bottom:1px solid var(--line-strong);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;color:var(--ink-soft);text-transform:uppercase;
+  }
+  .console-bar i{width:.6rem;height:.6rem;background:var(--accent)}
+  .console-body{padding:clamp(1rem,2.5vw,1.8rem);display:grid;grid-template-columns:minmax(180px,1fr) minmax(0,1.25fr);gap:clamp(1.2rem,3vw,2.2rem)}
+  .console-body > *{min-width:0}
+  .field-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);display:block;margin:0 0 .6rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.45rem}
+  .chip{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;cursor:pointer;
+    border:1px solid var(--line-strong);background:transparent;color:var(--ink);
+    padding:.42rem .6rem;transition:all .15s;
+  }
+  .chip:hover{border-color:var(--accent-deep);color:var(--accent-deep)}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  fieldset{border:none}
+  .policy-toggles{display:grid;gap:.7rem;margin-top:1.4rem}
+  .switch{display:flex;align-items:center;gap:.7rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;cursor:pointer}
+  .switch input{appearance:none;width:2.3rem;height:1.15rem;border:1px solid var(--line-strong);cursor:pointer;position:relative;background:transparent;flex-shrink:0}
+  .switch input::after{content:"";position:absolute;top:2px;left:2px;width:.82rem;height:.78rem;background:var(--ink-soft);transition:left .15s,background .15s}
+  .switch input:checked::after{left:calc(100% - .86rem);background:var(--accent)}
+  .presets{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1.4rem}
+  .preset{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+    border:1px dashed var(--line-strong);background:transparent;color:var(--ink-soft);padding:.38rem .55rem;
+  }
+  .preset:hover,.preset[aria-pressed="true"]{border-style:solid;border-color:var(--accent-deep);color:var(--accent-deep)}
+
+  .term{
+    background:var(--dark);color:#D8D2C2;border:1px solid var(--dark);
+    padding:1rem 1.1rem;font-family:var(--mono);font-size:.78rem;line-height:1.7;min-height:0;
+  }
+  .term .cmd{color:#8F887A}.term .cmd::before{content:"$ ";color:var(--accent)}
+  .term .cap-ok::after{content:" ✓";color:#B9C46A}
+  .term .req-title{color:#8F887A;letter-spacing:.14em;font-size:.66rem;text-transform:uppercase}
+  .runner-row{
+    display:flex;align-items:baseline;gap:.7rem;padding:.34rem 0;border-bottom:1px dotted var(--dark-line);
+  }
+  .runner-row:last-of-type{border-bottom:none}
+  .runner-row .sq{width:.62rem;height:.62rem;flex-shrink:0;transform:translateY(.06em)}
+  .sq.ok{background:#B9C46A}.sq.no{border:1px solid #8F887A;background:transparent}
+  .runner-row .rid{min-width:7.4rem}
+  .runner-row .why{margin-left:auto;text-align:right;color:#8F887A;font-size:.68rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
+  .runner-row.ok .rid{color:#EDE8DA}
+  .verdict{
+    margin-top:1rem;border:1px solid;padding:.7rem .9rem;display:flex;align-items:center;gap:.8rem;
+    transform:rotate(-1.1deg);letter-spacing:.16em;font-size:.74rem;text-transform:uppercase;
+  }
+  .verdict.resolved{border-color:#B9C46A;color:#B9C46A}
+  .verdict.failclosed{border-color:var(--accent);color:var(--accent);transform:rotate(-2.4deg)}
+  .verdict .big{font-weight:500}
+
+  /* ---------- runners table ---------- */
+  .tbl-wrap{overflow-x:auto}
+  table.runners{width:100%;border-collapse:collapse;min-width:640px}
+  table.runners th{
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+    text-align:left;padding:.7rem .9rem;border-bottom:1px solid var(--line-strong);font-weight:500;
+  }
+  table.runners td{padding:1.05rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+  table.runners td.rid{font-weight:600;letter-spacing:-.01em}
+  table.runners tr{transition:background .15s,color .15s}
+  table.runners tbody tr:hover{background:var(--ink);color:var(--paper)}
+  table.runners tbody tr:hover .dim{color:rgba(243,239,228,.6)}
+  .dim{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);transition:color .15s}
+  .flag{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;border:1px solid currentColor;padding:.16rem .4rem;margin:.15rem .3rem .15rem 0;text-transform:uppercase}
+  .flag.yes{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  table.runners tbody tr:hover .flag.yes{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .footnote{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-top:1.2rem}
+  .footnote b{color:var(--accent-deep);font-weight:500}
+
+  /* ---------- policy dark band ---------- */
+  .policy-band{
+    background:var(--dark);color:var(--paper);margin:0 calc(-1 * clamp(1rem,4vw,3rem));
+    padding:clamp(3.5rem,8vw,7rem) clamp(1rem,4vw,3rem);
+    position:relative;overflow:hidden;
+  }
+  .policy-band::before{
+    content:"";position:absolute;inset:0;opacity:.5;
+    background:repeating-linear-gradient(90deg,transparent 0 118px,var(--dark-line) 118px 119px),
+               repeating-linear-gradient(0deg,transparent 0 118px,var(--dark-line) 118px 119px);
+  }
+  .policy-inner{max-width:1240px;margin:0 auto;position:relative}
+  .policy-inner .sec-head,.policy-inner th{border-color:var(--dark-line);color:rgba(243,239,228,.6)}
+  .policy-inner .no{color:var(--accent)}
+  .failword{
+    font-weight:800;font-size:clamp(3rem,10vw,8.4rem);line-height:.92;letter-spacing:-.04em;text-transform:uppercase;
+    margin:1.5rem 0 2.5rem;
+  }
+  .failword em{font-family:var(--serif);font-style:italic;font-weight:400;text-transform:none;color:var(--accent)}
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--dark-line);border:1px solid var(--dark-line)}
+  .rule{background:var(--dark);padding:1.6rem 1.4rem}
+  .rule .rn{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--accent);display:block;margin-bottom:.9rem}
+  .rule h3{font-size:1.06rem;font-weight:600;letter-spacing:-.01em;margin-bottom:.55rem}
+  .rule p{font-size:.9rem;color:rgba(243,239,228,.66)}
+  .policy-foot{margin-top:1.6rem;font-family:var(--mono);font-size:.72rem;color:rgba(243,239,228,.55)}
+  .policy-foot b{color:var(--accent);font-weight:500}
+
+  /* ---------- flow steps ---------- */
+  .flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .step{background:var(--paper);padding:1.4rem 1.2rem 1.6rem;min-height:11rem;position:relative;transition:background .15s}
+  .step:hover{background:var(--paper-hi)}
+  .step .sn{font-family:var(--serif);font-style:italic;font-size:2.4rem;line-height:1;color:var(--accent-deep);display:block}
+  .step h3{font-size:.98rem;font-weight:600;margin:.8rem 0 .4rem;letter-spacing:-.01em}
+  .step p{font-size:.84rem;color:var(--ink-soft)}
+
+  /* ---------- proof ---------- */
+  .proof-stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line-strong);margin-bottom:2.2rem}
+  .proof-stats .cell{padding:1.5rem 1.3rem;border-right:1px solid var(--line)}
+  .proof-stats .cell:last-child{border-right:none}
+  .proof-stats b{display:block;font-weight:800;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:-.03em;line-height:1}
+  .proof-stats b em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent-deep)}
+  .proof-stats span{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  figure.shot{border:1px solid var(--line-strong);background:var(--paper-hi);padding:.6rem}
+  figure.shot img{width:100%;height:auto;display:block;border:1px solid var(--line)}
+  figure figcaption{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--ink-soft);
+    padding:.7rem .3rem .2rem;display:flex;gap:1rem;flex-wrap:wrap;
+  }
+  figure figcaption a{color:var(--accent-deep)}
+
+  /* ---------- install ---------- */
+  .install-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+  .code-card{border:1px solid var(--line-strong);background:var(--dark);color:#D8D2C2}
+  .code-card header{
+    display:flex;justify-content:space-between;align-items:center;padding:.55rem .9rem;
+    border-bottom:1px solid var(--dark-line);font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;
+    text-transform:uppercase;color:rgba(243,239,228,.55);
+  }
+  .copy{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;background:transparent;border:1px solid rgba(243,239,228,.3);color:rgba(243,239,228,.7);cursor:pointer;padding:.22rem .5rem}
+  .copy:hover{border-color:var(--accent);color:var(--accent)}
+  pre{padding:1.1rem 1.2rem;overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.75}
+  pre .c{color:#8F887A}pre .a{color:var(--accent)}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line-strong);margin-top:clamp(2rem,5vw,4rem);
+    padding:2.5rem clamp(1rem,4vw,3rem) 3rem;max-width:1240px;margin-left:auto;margin-right:auto;
+  }
+  .foot-grid{display:flex;gap:2.5rem;flex-wrap:wrap;align-items:flex-start}
+  .foot-col{font-family:var(--mono);font-size:.72rem;line-height:2;color:var(--ink-soft)}
+  .foot-col a{text-decoration:none;color:var(--ink)}
+  .foot-col a:hover{color:var(--accent-deep)}
+  .foot-prov{margin-left:auto;text-align:right;font-family:var(--mono);font-size:.66rem;line-height:1.9;color:var(--ink-soft)}
+  .foot-word{
+    font-weight:800;font-size:clamp(3rem,13vw,11rem);letter-spacing:-.05em;line-height:1;text-transform:uppercase;
+    margin-top:2.5rem;color:transparent;-webkit-text-stroke:1.5px rgba(26,22,15,.35);user-select:none;
+  }
+
+  /* ---------- motion ---------- */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .load > *{opacity:0;animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .load > *:nth-child(1){animation-delay:.05s}.load > *:nth-child(2){animation-delay:.14s}
+  .load > *:nth-child(3){animation-delay:.23s}.load > *:nth-child(4){animation-delay:.32s}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .load > *{opacity:1;animation:none}
+  }
+
+  /* ---------- responsive ---------- */
+  @media(max-width:980px){
+    .hero-grid{grid-template-columns:1fr}
+    .flow-grid{grid-template-columns:repeat(2,1fr)}
+    .rules{grid-template-columns:1fr}
+    .install-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:720px){
+    .stat-rail{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(2){border-right:none}
+    .stat:nth-child(-n+2){border-bottom:1px dashed var(--line)}
+    .proof-stats{grid-template-columns:repeat(2,1fr)}
+    .proof-stats .cell:nth-child(2){border-right:none}
+    .proof-stats .cell:nth-child(-n+2){border-bottom:1px solid var(--line)}
+    .console-body{grid-template-columns:1fr}
+    nav{margin-left:0}
+  }
+  @media(max-width:420px){
+    .flow-grid{grid-template-columns:1fr}
+    .runner-row .rid{min-width:6.4rem;font-size:.68rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────────── workflow ticker ─────────── -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<header class="masthead">
+  <a class="mark" href="#top"><i></i>Design&nbsp;Runner</a>
+  <nav aria-label="Sections">
+    <a href="#resolver">Resolver</a>
+    <a href="#runners">Runners</a>
+    <a href="#policy">Policy</a>
+    <a href="#flow">One-page flow</a>
+    <a href="#install">Install</a>
+  </nav>
+  <span class="rev">CAT v1 · 5R / 15W</span>
+</header>
+
+<main id="top">
+
+  <!-- ─────────── hero ─────────── -->
+  <section class="hero load" aria-label="Introduction">
+    <div class="hero-grid">
+      <div>
+        <h1>
+          One workflow.<br>
+          <span class="out">Any</span> design tool.<br>
+          <em>Swap the provider, keep the craft.</em>
+        </h1>
+        <p class="hero-copy">
+          Design Runner separates <strong>what you make</strong> from <strong>where you make it</strong>.
+          A workflow asks for abstract capabilities — document inspection, canvas execution, render capture.
+          A runner maps those capabilities onto Figma, Tencent&nbsp;Design Ardot, self-hosted Penpot,
+          or plain local files — then applies a <strong>fail-closed policy</strong> before any cloud,
+          desktop, or write operation fires.
+        </p>
+        <p class="cta-row">
+          <a class="btn btn-solid" href="#resolver">Try the resolver ↓</a>
+          <a class="btn btn-ghost" href="https://github.com/liush2yuxjtu/design-runner-skill">GitHub ↗</a>
+        </p>
+      </div>
+
+      <!-- ── live resolution console ── -->
+      <aside class="console" id="resolver" style="scroll-margin-top:6rem" aria-label="Interactive resolver console">
+        <div class="console-bar"><i></i>Capability Resolver · live demo</div>
+        <div class="console-body">
+          <div>
+            <label class="field-label" id="wfLabel">Workflow</label>
+            <div class="chips" id="wfChips" role="group" aria-labelledby="wfLabel"></div>
+            <fieldset>
+              <legend class="field-label" style="margin-top:1.4rem">Policy</legend>
+              <div class="policy-toggles">
+                <label class="switch"><input type="checkbox" id="polCloud"><span>Cloud access</span></label>
+                <label class="switch"><input type="checkbox" id="polDesktop"><span>Desktop app</span></label>
+                <label class="switch"><input type="checkbox" id="polWrites"><span>Design writes</span></label>
+              </div>
+            </fieldset>
+            <div class="presets" role="group" aria-label="Policy presets">
+              <button class="preset" type="button" data-preset="safe">Safe local</button>
+              <button class="preset" type="button" data-preset="ardot">Ardot remote</button>
+              <button class="preset" type="button" data-preset="open">Open</button>
+            </div>
+          </div>
+          <div class="term" aria-live="polite">
+            <div class="cmd" id="cmdLine">runner.py resolve canvas</div>
+            <p class="req-title" style="margin:.6rem 0 .2rem">Required capabilities</p>
+            <div id="capList"></div>
+            <p class="req-title" style="margin:.7rem 0 .1rem">Runner verdicts</p>
+            <div id="verdictRows"></div>
+            <div class="verdict" id="verdictStamp"></div>
           </div>
         </div>
-        <div class="terminal" aria-label="Command example">
-          <div class="terminal-head">
-            <span class="dots">● ● ●</span><span>unified-product-flow</span
-            ><button
-              class="copy"
-              data-copy="python3 ~/.agents/skills/design-runner/scripts/runner.py resolve unified-product-flow"
-            >
-              Copy
-            </button>
-          </div>
-          <pre><span style="color:#c8ff4d">$</span> python3 runner.py resolve \
-  unified-product-flow
+      </aside>
+    </div>
 
-runner=ardot-remote
-workflow=unified-product-flow
+    <!-- stat rail -->
+    <div class="stat-rail reveal">
+      <div class="stat"><b>5<sup>×</sup></b><span>runners · local → cloud</span></div>
+      <div class="stat"><b>15<sup>+</sup></b><span>workflows &amp; aliases</span></div>
+      <div class="stat"><b>0<sup>&nbsp;</sup></b><span>silent provider swaps</span></div>
+      <div class="stat"><b>denied<sup>&nbsp;</sup></b><span>default posture, always</span></div>
+    </div>
+  </section>
 
-DOCUMENT_INSPECT  [tool]
-CANVAS_EXECUTE    [tool]
-RENDER_CAPTURE    [tool]
-ASSET_EXPORT      [optional]
+  <!-- ─────────── runners catalog ─────────── -->
+  <section id="runners" style="scroll-margin-top:4.5rem">
+    <div class="sec-head reveal">
+      <span class="no">01</span><h2>The Runner Catalog</h2><span class="tag">verified against live MCP builds</span>
+    </div>
+    <div class="tbl-wrap reveal">
+      <table class="runners">
+        <thead>
+          <tr><th scope="col">Runner</th><th scope="col">Transport</th><th scope="col">Posture</th><th scope="col">Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rid">local-files</td>
+            <td class="dim">kind: local</td>
+            <td><span class="flag">cloud off</span><span class="flag">desktop off</span><span class="flag yes">safe default</span></td>
+            <td>HTML, SVG, source trees, and local browser QA. Needs no configuration.</td>
+          </tr>
+          <tr>
+            <td class="rid">penpot-local</td>
+            <td class="dim">kind: mcp</td>
+            <td><span class="flag">cloud off</span><span class="flag">desktop off</span></td>
+            <td>Self-hosted Penpot adapter. Motion is emulated through canvas primitives.</td>
+          </tr>
+          <tr>
+            <td class="rid">ardot-remote</td>
+            <td class="dim">kind: mcp</td>
+            <td><span class="flag yes">cloud on</span><span class="flag">desktop off</span></td>
+            <td>GUI-free after browser OAuth. Verified against Ardot MCP 1.0.11. OAuth state stays outside the repository.</td>
+          </tr>
+          <tr>
+            <td class="rid">ardot-desktop</td>
+            <td class="dim">kind: mcp · :50501</td>
+            <td><span class="flag">desktop req.</span></td>
+            <td>Requires explicit desktop permission. File creation unsupported in the verified server version.</td>
+          </tr>
+          <tr>
+            <td class="rid">figma-remote</td>
+            <td class="dim">kind: mcp</td>
+            <td><span class="flag yes">cloud on</span><span class="flag">desktop off</span></td>
+            <td>Full native capability coverage including motion read/write.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footnote reveal">Capabilities resolve through names like <b>$DESIGN_RUNNER_DOCUMENT_INSPECT</b> — abstract requests, never literal tool names. A runner cannot quietly substitute another provider when one is missing.</p>
+  </section>
 
-<span style="color:#c8ff4d">OK · policy checked</span></pre>
+  <!-- ─────────── policy dark band ─────────── -->
+  <section class="policy-band" id="policy" aria-label="Fail closed policy" style="scroll-margin-top:4.5rem">
+    <div class="policy-inner">
+      <div class="sec-head reveal">
+        <span class="no">02</span><h2 style="color:var(--paper)">Fail Closed, Not Polite</h2><span class="tag">checked by 8 resolver tests</span>
+      </div>
+      <p class="failword reveal">When in doubt,<br><em>deny everything.</em></p>
+      <div class="rules reveal">
+        <div class="rule">
+          <span class="rn">RULE R-01</span>
+          <h3>No silent fallback</h3>
+          <p>A missing capability stops the workflow. The runner never substitutes another provider mid-task to keep moving.</p>
         </div>
-      </section>
-      <div class="shell metrics" aria-label="Project facts">
-        <div class="metric"><strong>5</strong><span>runner profiles</span></div>
-        <div class="metric">
-          <strong>15</strong><span>portable workflows</span>
+        <div class="rule">
+          <span class="rn">RULE R-02</span>
+          <h3>Writes are explicit</h3>
+          <p>Every operation that mutates a design file is flagged. Cloud, desktop apps, and design writes are denied unless your policy allows each one.</p>
         </div>
-        <div class="metric"><strong>8</strong><span>resolver tests</span></div>
-        <div class="metric">
-          <strong>0</strong><span>silent fallbacks</span>
+        <div class="rule">
+          <span class="rn">RULE R-03</span>
+          <h3>Unknown means write-capable</h3>
+          <p>An unrecognized tool is assumed to write designs until proven otherwise. Trust is earned by inspection, never granted by default.</p>
         </div>
       </div>
-      <section class="shell" id="workflow">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">one process</div>
-            <h2>Provider names stay out of the plan.</h2>
-          </div>
-          <p class="section-copy">
-            Workflows request capabilities. Runner manifests map those
-            capabilities to live tools. Missing support stays missing, instead
-            of quietly sending work to another provider.
-          </p>
-        </div>
-        <div
-          class="flow-card"
-          tabindex="0"
-          aria-label="Portable workflow sequence"
-        >
-          <div class="flow-line">
-            <div class="flow-node">
-              <b>Inspect</b
-              ><span>Read document, screens, tokens, and components.</span>
-            </div>
-            <div class="flow-node">
-              <b>Resolve</b
-              ><span>Match required capabilities to the selected runner.</span>
-            </div>
-            <div class="flow-node">
-              <b>Execute</b
-              ><span>Edit in bounded batches with explicit write policy.</span>
-            </div>
-            <div class="flow-node">
-              <b>Capture</b
-              ><span>Check layout, pixels, clipping, and connectors.</span>
-            </div>
-            <div class="flow-node">
-              <b>Verify</b
-              ><span>Export the real target and leave local evidence.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="shell" style="padding-top: 20px">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">runner catalog</div>
-            <h2>Local first. Remote by permission.</h2>
-          </div>
-          <p class="section-copy">
-            The default runner writes local files and denies cloud access.
-            Remote providers require explicit policy changes.
-          </p>
-        </div>
-        <div class="providers">
-          <article class="provider">
-            <code>local-files</code>
-            <p>HTML, SVG, source, and Chromium QA. Safe default.</p>
-          </article>
-          <article class="provider">
-            <code>penpot-local</code>
-            <p>Self-hosted Penpot without a cloud requirement.</p>
-          </article>
-          <article class="provider">
-            <code>ardot-remote</code>
-            <p>GUI-free Ardot MCP after browser OAuth. Uses Ardot Cloud.</p>
-          </article>
-          <article class="provider">
-            <code>ardot-desktop</code>
-            <p>Desktop profile. Disabled until policy allows the app.</p>
-          </article>
-          <article class="provider">
-            <code>figma-remote</code>
-            <p>Remote Figma adapter with explicit cloud and write policy.</p>
-          </article>
-        </div>
-      </section>
-      <section class="orbit" id="orbit">
-        <div class="shell">
-          <div class="section-head">
-            <div>
-              <div class="eyebrow" style="color: #c8ff4d">Orbit SaaS proof</div>
-              <h2>Thirteen pages went in. One canvas came out.</h2>
-            </div>
-            <p class="section-copy">
-              The workflow kept twelve product screens, tiled them at original
-              size, drew eleven route connectors, removed the abstract
-              interaction-map page, and deleted every empty source page.
-            </p>
-          </div>
-          <div class="proof">
-            <img
-              src="assets/orbit-unified-flow.png"
-              alt="Orbit SaaS twelve-screen unified Ardot product flow"
-              width="2640"
-              height="503"
-            /><video
-              controls
-              muted
-              playsinline
-              preload="metadata"
-              poster="assets/orbit-unified-flow.png"
-            >
-              <source src="assets/orbit-saas-demo.webm" type="video/webm" />
-              Your browser does not support WebM video.
-            </video>
-            <div class="proof-caption">
-              <span
-                >Real Ardot export · 1 page · 12 screens · 11 connectors</span
-              ><a href="orbit/">Open interactive prototype</a>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="shell" id="install">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">installation</div>
-            <h2>Clone once. Pick a runner per project.</h2>
-          </div>
-          <p class="section-copy">
-            The repository root is the Skill. Extra folders contain the Pi
-            extension, tests, documentation, and the Orbit example.
-          </p>
-        </div>
-        <div class="install-grid">
-          <article class="install-card">
-            <h3>Safe local mode</h3>
-            <pre>
-git clone \
-  https://github.com/liush2yuxjtu/design-runner-skill.git \
+      <p class="policy-foot reveal">Enforced before every call → <b>scripts/runner.py check</b> exits non-zero on any policy violation. Credentials stay out of Git: no OAuth JSON, no tokens, no exceptions.</p>
+    </div>
+  </section>
+
+  <!-- ─────────── unified product flow ─────────── -->
+  <section id="flow" style="scroll-margin-top:4.5rem">
+    <div class="sec-head reveal">
+      <span class="no">03</span><h2>Unified Product Flow</h2><span class="tag">workflow № 02 in the catalog</span>
+    </div>
+    <p class="hero-copy reveal" style="margin:-1rem 0 2.4rem;max-width:58ch">
+      Scattered mocks become one reviewable canvas. Twelve screens move without resizing,
+      navigation gets labeled arrows instead of abstract interaction-map pages, and the empty
+      pages behind them disappear.
+    </p>
+    <ol class="flow-grid reveal" style="list-style:none">
+      <li class="step"><span class="sn">1</span><h3>Inventory roots</h3><p>Find every real screen root across the file. Nothing invented, nothing skipped.</p></li>
+      <li class="step"><span class="sn">2</span><h3>Reuse one page</h3><p>Claim an existing design page as the single canvas rather than spawning another.</p></li>
+      <li class="step"><span class="sn">3</span><h3>Tile in place</h3><p>Move screens side by side. Sizes stay untouched so reviews compare like with like.</p></li>
+      <li class="step"><span class="sn">4</span><h3>Connect routes</h3><p>Labeled arrows carry navigation, detail, branch, and return jumps between screens.</p></li>
+      <li class="step"><span class="sn">5</span><h3>Replace abstractions</h3><p>Old interaction-map pages get deleted once their routes exist as real connectors.</p></li>
+      <li class="step"><span class="sn">6</span><h3>Verify first</h3><p>Confirm every root landed on the unified page before anything destructive runs.</p></li>
+      <li class="step"><span class="sn">7</span><h3>Collapse pages</h3><p>Delete emptied source pages until exactly one page remains. One canvas, whole product.</p></li>
+      <li class="step"><span class="sn">8</span><h3>Export proof</h3><p>Pull a full-page overview and inspect every connector before calling the flow done.</p></li>
+    </ol>
+  </section>
+
+  <!-- ─────────── proof ─────────── -->
+  <section id="proof" style="scroll-margin-top:4.5rem">
+    <div class="sec-head reveal">
+      <span class="no">04</span><h2>Orbit SaaS Proof</h2><span class="tag">real run · ardot cloud</span>
+    </div>
+    <div class="proof-stats reveal">
+      <div class="cell"><b>13<em>→</em>1</b><span>pages collapsed</span></div>
+      <div class="cell"><b>12</b><span>screens tiled, unresized</span></div>
+      <div class="cell"><b>11</b><span>route connectors drawn</span></div>
+      <div class="cell"><b>36s</b><span>walkthrough recorded</span></div>
+    </div>
+    <figure class="shot reveal">
+      <img src="assets/orbit-unified-flow.png" alt="Orbit SaaS unified product flow — twelve tiled screens connected by eleven labeled arrows on a single Ardot page" loading="lazy" width="1600" height="900">
+      <figcaption>
+        <span>Exported from Ardot · full-page overview</span>
+        <a href="orbit/">Interactive prototype ↗</a>
+        <a href="assets/orbit-saas-demo.webm">Watch walkthrough (.webm) ↗</a>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ─────────── install ─────────── -->
+  <section id="install" style="scroll-margin-top:4.5rem">
+    <div class="sec-head reveal">
+      <span class="no">05</span><h2>Install &amp; First Run</h2><span class="tag">python3 · zero config for safe mode</span>
+    </div>
+    <div class="install-grid">
+      <div class="code-card reveal">
+        <header><span>step 1 — clone</span><button class="copy" type="button" data-target="c1">copy</button></header>
+        <pre id="c1">git clone https://github.com/liush2yuxjtu/design-runner-skill.git \
   ~/.agents/skills/design-runner
 
-python3 ~/.agents/skills/design-runner/\
-scripts/runner.py check</pre>
-          </article>
-          <article class="install-card">
-            <h3>Ardot Remote in Pi</h3>
-            <pre>
-python3 runner.py use ardot-remote \
-  --project . \
-  --cloud allow \
-  --desktop deny \
-  --design-writes allow
-
-/design-mcp connect ardot-remote</pre>
-          </article>
-        </div>
-      </section>
-      <section class="shell" style="padding-top: 0">
-        <div class="guard">
-          <h3>Fail closed means no surprise provider calls.</h3>
-          <p>
-            Unknown tools count as write-capable. Remote runners cannot start
-            without cloud permission. Desktop profiles cannot start without
-            desktop permission. Missing capabilities stop the workflow.
-          </p>
-        </div>
-      </section>
-    </main>
-    <footer>
-      <div class="shell footer-row">
-        <span
-          >MIT ·
-          <a href="https://github.com/liush2yuxjtu/design-runner-skill"
-            >GitHub source</a
-          ></span
-        ><span
-          >Source project: design-runner-skill ·
-          /Users/liushiyuwin/projects/design-runner-skill · Pi session:
-          01a04127-b179-79c5-99cb-235b8fa6a690</span
-        >
+<span class="c"># safe local mode needs no configuration:</span>
+<span class="c"># cloud ✕ desktop ✕ design-writes ✕</span></pre>
       </div>
-    </footer>
-    <script>
-      document.querySelectorAll("[data-copy]").forEach((button) => {
-        button.addEventListener("click", async () => {
-          await navigator.clipboard.writeText(button.dataset.copy);
-          const before = button.textContent;
-          button.textContent = "Copied";
-          setTimeout(() => {
-            button.textContent = before;
-          }, 1200);
-        });
-      });
-    </script>
-  </body>
+      <div class="code-card reveal">
+        <header><span>step 2 — resolve</span><button class="copy" type="button" data-target="c2">copy</button></header>
+        <pre id="c2">python3 ~/.agents/skills/design-runner/scripts/runner.py check
+
+python3 ~/.agents/skills/design-runner/scripts/runner.py \
+  resolve design-to-code
+
+<span class="c"># swap provider without rewriting the task:</span>
+<span class="a">#   resolve ardot-remote · penpot-local · figma-remote</span></pre>
+      </div>
+    </div>
+    <p class="footnote reveal">Going headless with Pi? The bundled extension (<span style="font-family:var(--mono)">extensions/pi-design-mcp</span>) loads provider tools dynamically and keeps OAuth state under Pi's private directory — never inside the repository.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-grid">
+    <div class="foot-col">
+      <strong style="letter-spacing:-.01em">Design Runner</strong><br>
+      <a href="https://github.com/liush2yuxjtu/design-runner-skill">GitHub repository ↗</a><br>
+      <a href="orbit/">Orbit prototype ↗</a><br>
+      <a href="https://ardot.tencent.com/file/719319930015525">Ardot flow artifact ↗</a>
+    </div>
+    <div class="foot-col">
+      MIT License<br>
+      SECURITY.md before publishing a runner<br>
+      tests/ · evals/ · extensions/
+    </div>
+    <div class="foot-prov">
+      docs/index.html — rebuilt from zero<br>
+      built 2026-08-27 · agent: Claude Code<br>
+      runner data embedded from runners/*.json<br>
+      &amp; workflows.json @ commit 5af5b7d
+    </div>
+  </div>
+  <div class="foot-word" aria-hidden="true">Deny, then ask</div>
+</footer>
+
+<script>
+/* ══════════ data lifted verbatim from the repository ══════════ */
+const WORKFLOWS = {
+  canvas:{req:["document.inspect","canvas.execute","render.capture"],alias:"figma-use"},
+  "unified-product-flow":{req:["document.inspect","canvas.execute","render.capture"],alias:"one-page-product-flow"},
+  "create-file":{req:["file.create"],alias:"figma-create-new-file"},
+  "design-to-code":{req:["document.inspect","render.capture"],alias:"implement-design"},
+  "component-map":{req:["document.inspect","component.read","component.map"],alias:"figma-code-connect"},
+  "generate-design":{req:["canvas.execute","render.capture"],alias:"figma-generate-design"},
+  "design-system":{req:["token.read","token.write","component.read","component.write","render.capture"],alias:"create-design-system-rules"},
+  diagram:{req:["diagram.create"],alias:"figma-generate-diagram"},
+  whiteboard:{req:["whiteboard.edit"],alias:"figma-use-figjam"},
+  slides:{req:["slides.edit"],alias:"figma-use-slides"},
+  "motion-author":{req:["motion.write"],alias:"figma-use-motion"},
+  "motion-to-code":{req:["motion.read","document.inspect"],alias:"figma-implement-motion"},
+  swiftui:{req:["document.inspect"],alias:"figma-swiftui"},
+  "project-plan":{req:["whiteboard.edit"],alias:"generate-project-plan"},
+  "video-storyboard":{req:["asset.import","canvas.execute","render.capture"],alias:"video-interaction-mapper"}
+};
+const RUNNERS = [
+  {id:"local-files",  req:{cloud:false,desktop:false},caps:{file:"ok",doc:"ok",exec:"ok",render:"ok",token:"ok",comp:"ok",map:"ok",dia:"ok",wb:"ok",sl:"ok",motion:"ok",assetImp:"ok",assetExp:"ok"}},
+  {id:"penpot-local", req:{cloud:false,desktop:false},caps:{file:"no",doc:"ok",exec:"ok",render:"ok",token:"ok",comp:"ok",map:"emul",dia:"emul",wb:"emul",sl:"emul",motion:"emul",assetImp:"ok",assetExp:"ok"}},
+  {id:"ardot-remote", req:{cloud:true, desktop:false},caps:{file:"ok",doc:"ok",exec:"ok",render:"ok",token:"ok",comp:"ok",map:"emul",dia:"emul",wb:"emul",sl:"emul",motion:"no",assetImp:"ok",assetExp:"ok"}},
+  {id:"ardot-desktop",req:{cloud:false,desktop:true },caps:{file:"no",doc:"ok",exec:"ok",render:"ok",token:"ok",comp:"ok",map:"emul",dia:"emul",wb:"emul",sl:"emul",motion:"no",assetImp:"ok",assetExp:"ok"}},
+  {id:"figma-remote", req:{cloud:true, desktop:false},caps:{file:"ok",doc:"ok",exec:"ok",render:"ok",token:"ok",comp:"ok",map:"ok",dia:"ok",wb:"ok",sl:"ok",motion:"ok",assetImp:"ok",assetExp:"ok"}}
+];
+/* required-capability → cap slot (+ whether it writes a design) */
+const CAPMAP = [
+  ["document.inspect","doc",false,"inspect"],
+  ["canvas.execute","exec",true,"execute"],
+  ["render.capture","render",false,"render"],
+  ["file.create","file",true,"create"],
+  ["component.read","comp",false,"components"],
+  ["component.map","map",false,"map"],
+  ["token.read","token",true,"tokens"],
+  ["token.write","token",true,"write tokens"],
+  ["component.write","comp",true,"write comps"],
+  ["diagram.create","dia",true,"diagram"],
+  ["whiteboard.edit","wb",true,"whiteboard"],
+  ["slides.edit","sl",true,"slides"],
+  ["asset.import","assetImp",true,"import"],
+  ["motion.read","motion",false,"motion"],
+  ["motion.write","motion",true,"motion"]
+];
+const POLICY_KEYS = {safe:[false,false,false],ardot:[true,false,true],open:[true,true,true]};
+const WRITE_CAPS = new Set(["canvas.execute","file.create","token.write","component.write",
+  "diagram.create","whiteboard.edit","slides.edit","asset.import","motion.write"]);
+
+/* ══════════ ticker ══════════ */
+(()=>{ const items = Object.entries(WORKFLOWS)
+  .map(([k,v])=>`<span>${k}</span><b>aka</b><span>${v.alias}</span>`).join('<b>✳</b>');
+  document.getElementById("tickerTrack").innerHTML = items+'<b>✳</b>'+items+'<b>✳</b>'; })();
+
+/* ══════════ resolver ══════════ */
+let wfSel = "canvas";
+const $ = id => document.getElementById(id);
+
+function renderChips(){
+  $("wfChips").innerHTML = Object.keys(WORKFLOWS).map(k=>
+    `<button class="chip" type="button" aria-pressed="${k===wfSel}" data-wf="${k}">${k}</button>`).join("");
+}
+function esc(s){return s.replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}
+
+function resolve(){
+  const wf = WORKFLOWS[wfSel];
+  const pol = {cloud:$("polCloud").checked, desktop:$("polDesktop").checked, writes:$("polWrites").checked};
+  $("cmdLine").textContent = `runner.py resolve ${wfSel}`;
+
+  $("capList").innerHTML = wf.req.map(c=>{
+    const meta = CAPMAP.find(m=>m[0]===c);
+    return `<div>${esc(c)}${meta&&WRITE_CAPS.has(c)?'<span style="color:var(--accent)"> ✎write</span>':''}<span class="cap-ok"></span></div>`;
+  }).join("");
+
+  let firstOk = null;
+  $("verdictRows").innerHTML = RUNNERS.map(r=>{
+    let why = "", ok = true;
+    if(r.req.cloud && !pol.cloud){ok=false;why="needs cloud";}
+    else if(r.req.desktop && !pol.desktop){ok=false;why="needs desktop app";}
+    else{
+      const miss = [];
+      for(const c of wf.req){
+        const meta = CAPMAP.find(m=>m[0]===c); if(!meta) continue;
+        const st = r.caps[meta[1]];
+        if(st==="no") miss.push(c);
+        if(WRITE_CAPS.has(c) && !pol.writes && why==="") why="write-gated";
+      }
+      if(miss.length){ok=false;why=`missing ${miss[0]}`;}
+      else if(!pol.writes && why==="write-gated"){ok=false;}
+      else if(pol.writes || why!=="write-gated"){why="allow · "+r.id+".json";ok=true;}
+    }
+    if(ok){
+      // a write-gated-but-policy-allows case stays ok
+      if(firstOk===null) firstOk=r.id;
+      return `<div class="runner-row ok"><span class="sq ok"></span><span class="rid">${r.id}</span><span class="why">${why.replace("write-gated","writes allowed")}</span></div>`;
+    }
+    return `<div class="runner-row"><span class="sq no"></span><span class="rid">${r.id}</span><span class="why">${why}</span></div>`;
+  }).join("");
+
+  const stamp = $("verdictStamp");
+  if(firstOk){
+    stamp.className="verdict resolved";
+    stamp.innerHTML=`<span>✔ resolved</span><span class="big">→ ${firstOk}</span>`;
+  }else{
+    stamp.className="verdict failclosed";
+    stamp.innerHTML=`<span>■ fail closed</span><span class="big">no eligible runner</span>`;
+  }
+}
+
+$("wfChips").addEventListener("click",e=>{
+  const b=e.target.closest("[data-wf]"); if(!b)return;
+  wfSel=b.dataset.wf; renderChips(); resolve();
+});
+["polCloud","polDesktop","polWrites"].forEach(id=>$(id).addEventListener("change",()=>{
+  syncPresets(); resolve();
+}));
+document.querySelectorAll(".preset").forEach(p=>p.addEventListener("click",()=>{
+  const [c,d,w]=POLICY_KEYS[p.dataset.preset];
+  $("polCloud").checked=c;$("polDesktop").checked=d;$("polWrites").checked=w;
+  syncPresets(); resolve();
+}));
+function syncPresets(){
+  const cur=["polCloud","polDesktop","polWrites"].map(id=>$(id).checked).join(",");
+  document.querySelectorAll(".preset").forEach(p=>{
+    p.setAttribute("aria-pressed",POLICY_KEYS[p.dataset.preset].join(",")===cur);
+  });
+}
+renderChips();
+$("polCloud").checked=false;$("polDesktop").checked=false;$("polWrites").checked=false;
+syncPresets(); resolve();
+
+/* ══════════ copy buttons ══════════ */
+document.querySelectorAll(".copy").forEach(b=>b.addEventListener("click",()=>{
+  navigator.clipboard.writeText($(b.dataset.target).innerText.trim()).then(()=>{
+    const t=b.textContent;b.textContent="copied ✓";setTimeout(()=>b.textContent=t,1400);
+  });
+}));
+
+/* ══════════ scroll reveal ══════════ */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+</script>
+</body>
 </html>
