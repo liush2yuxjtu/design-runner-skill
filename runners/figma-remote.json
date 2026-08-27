@@ -1,0 +1,96 @@
+{
+  "id": "figma-remote",
+  "label": "Figma Remote MCP",
+  "kind": "mcp",
+  "endpoint": "https://mcp.figma.com/mcp",
+  "requirements": {
+    "cloud": true,
+    "desktopApp": false
+  },
+  "sources": [
+    "https://github.com/figma/mcp-server-guide",
+    "https://developers.figma.com/docs/figma-mcp-server/"
+  ],
+  "operations": {
+    "file.create": {
+      "kind": "tool",
+      "candidates": ["create_new_file"],
+      "writesDesign": true
+    },
+    "document.inspect": {
+      "kind": "tool",
+      "candidates": ["get_design_context", "get_metadata"],
+      "writesDesign": false
+    },
+    "canvas.execute": {
+      "kind": "tool",
+      "candidates": ["use_figma"],
+      "writesDesign": true
+    },
+    "render.capture": {
+      "kind": "tool",
+      "candidates": ["get_screenshot"],
+      "writesDesign": false
+    },
+    "asset.import": {
+      "kind": "tool",
+      "candidates": ["upload_assets"],
+      "writesDesign": true
+    },
+    "asset.export": {
+      "kind": "tool",
+      "candidates": ["download_assets", "get_screenshot"],
+      "writesDesign": false
+    },
+    "token.read": {
+      "kind": "tool",
+      "candidates": ["get_variable_defs"],
+      "writesDesign": false
+    },
+    "token.write": {
+      "kind": "tool",
+      "candidates": ["use_figma"],
+      "writesDesign": true
+    },
+    "component.read": {
+      "kind": "tool",
+      "candidates": ["search_design_system", "get_libraries", "get_code_connect_map"],
+      "writesDesign": false
+    },
+    "component.write": {
+      "kind": "tool",
+      "candidates": ["use_figma"],
+      "writesDesign": true
+    },
+    "component.map": {
+      "kind": "tool",
+      "candidates": ["add_code_connect_map", "send_code_connect_mappings"],
+      "writesDesign": true
+    },
+    "diagram.create": {
+      "kind": "tool",
+      "candidates": ["generate_diagram"],
+      "writesDesign": true
+    },
+    "whiteboard.edit": {
+      "kind": "tool",
+      "candidates": ["use_figma", "get_figjam"],
+      "writesDesign": true
+    },
+    "slides.edit": {
+      "kind": "tool",
+      "candidates": ["use_figma"],
+      "writesDesign": true
+    },
+    "motion.read": {
+      "kind": "tool",
+      "candidates": ["get_motion_context", "use_figma"],
+      "writesDesign": false
+    },
+    "motion.write": {
+      "kind": "tool",
+      "candidates": ["use_figma"],
+      "writesDesign": true
+    }
+  }
+}

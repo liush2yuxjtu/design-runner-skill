@@ -1,0 +1,79 @@
+{
+  "workflows": {
+    "canvas": {
+      "aliases": ["figma-use"],
+      "required": ["document.inspect", "canvas.execute", "render.capture"],
+      "optional": ["token.read", "component.read", "asset.import", "asset.export"]
+    },
+    "unified-product-flow": {
+      "aliases": ["single-page-product-flow", "one-page-product-flow", "screen-flow-canvas", "prototype-flow-map"],
+      "required": ["document.inspect", "canvas.execute", "render.capture"],
+      "optional": ["diagram.create", "asset.export", "token.read", "component.read"]
+    },
+    "create-file": {
+      "aliases": ["figma-create-new-file"],
+      "required": ["file.create"],
+      "optional": ["document.inspect"]
+    },
+    "design-to-code": {
+      "aliases": ["figma-design-to-code", "implement-design", "figma-implement-design"],
+      "required": ["document.inspect", "render.capture"],
+      "optional": ["token.read", "component.read", "asset.export"]
+    },
+    "component-map": {
+      "aliases": ["figma-code-connect", "code-connect-components", "figma-code-connect-components"],
+      "required": ["document.inspect", "component.read", "component.map"],
+      "optional": ["render.capture"]
+    },
+    "generate-design": {
+      "aliases": ["figma-generate-design"],
+      "required": ["canvas.execute", "render.capture"],
+      "optional": ["document.inspect", "token.read", "component.read", "asset.import"]
+    },
+    "design-system": {
+      "aliases": ["figma-generate-library", "create-design-system-rules", "figma-create-design-system-rules"],
+      "required": ["token.read", "token.write", "component.read", "component.write", "render.capture"],
+      "optional": ["component.map", "asset.import", "asset.export"]
+    },
+    "diagram": {
+      "aliases": ["figma-generate-diagram"],
+      "required": ["diagram.create"],
+      "optional": ["render.capture", "asset.export"]
+    },
+    "whiteboard": {
+      "aliases": ["figma-use-figjam"],
+      "required": ["whiteboard.edit"],
+      "optional": ["render.capture", "asset.import", "asset.export"]
+    },
+    "slides": {
+      "aliases": ["figma-use-slides"],
+      "required": ["slides.edit"],
+      "optional": ["render.capture", "asset.import", "asset.export"]
+    },
+    "motion-author": {
+      "aliases": ["figma-use-motion"],
+      "required": ["motion.write"],
+      "optional": ["motion.read", "render.capture"]
+    },
+    "motion-to-code": {
+      "aliases": ["figma-implement-motion"],
+      "required": ["motion.read", "document.inspect"],
+      "optional": ["render.capture", "asset.export"]
+    },
+    "swiftui": {
+      "aliases": ["figma-swiftui"],
+      "required": ["document.inspect"],
+      "optional": ["render.capture", "token.read", "component.read", "canvas.execute"]
+    },
+    "project-plan": {
+      "aliases": ["generate-project-plan"],
+      "required": ["whiteboard.edit"],
+      "optional": ["diagram.create", "render.capture", "asset.export"]
+    },
+    "video-storyboard": {
+      "aliases": ["video-interaction-mapper"],
+      "required": ["asset.import", "canvas.execute", "render.capture"],
+      "optional": ["asset.export"]
+    }
+  }
+}

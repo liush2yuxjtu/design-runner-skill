@@ -1,0 +1,1786 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Orbit SaaS 多页面交互原型</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%23335CFF'/%3E%3Ccircle cx='16' cy='16' r='5' fill='white'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --surface: #fff;
+        --sidebar: #0b1220;
+        --sidebar-2: #172033;
+        --text: #101828;
+        --muted: #667085;
+        --border: #e4e7ec;
+        --accent: #335cff;
+        --cyan: #06b6d4;
+        --green: #12b76a;
+        --orange: #f79009;
+        --danger: #f04438;
+        --radius: 14px;
+        --shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        overflow-x: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 Inter,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 232px minmax(0, 1fr);
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        min-width: 0;
+        height: 100vh;
+        background: var(--sidebar);
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .brand {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: 750;
+      }
+      .brand svg {
+        width: 32px;
+        height: 32px;
+        flex: none;
+      }
+      .workspace {
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--sidebar-2);
+      }
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #8c98ad;
+      }
+      .workspace strong {
+        display: block;
+        margin-top: 2px;
+      }
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+      .nav button {
+        height: 44px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #a8b3c5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 12px;
+        text-align: left;
+      }
+      .nav button:hover,
+      .nav button:focus-visible {
+        background: #172033;
+        color: #fff;
+      }
+      .nav button.active {
+        background: #24324a;
+        color: #fff;
+        font-weight: 700;
+      }
+      .nav svg {
+        width: 20px;
+        height: 20px;
+        flex: none;
+      }
+      .profile {
+        margin-top: auto;
+        background: var(--sidebar-2);
+        padding: 10px;
+        border-radius: 12px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .profile small {
+        display: block;
+        color: #8c98ad;
+      }
+      .main {
+        min-width: 0;
+        padding: 32px;
+      }
+      .topbar {
+        height: 72px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .topbar h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.25;
+      }
+      .topbar p {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+      .actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .button,
+      .select-button {
+        height: 40px;
+        border: 0;
+        border-radius: 10px;
+        padding: 0 16px;
+        background: #fff;
+        color: #344054;
+        font-weight: 650;
+        box-shadow: var(--shadow);
+      }
+      .button.primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .button.soft {
+        background: #eef2ff;
+        color: var(--accent);
+      }
+      .button.danger {
+        background: #fff1f0;
+        color: var(--danger);
+      }
+      .button:hover {
+        filter: brightness(0.98);
+        transform: translateY(-1px);
+      }
+      .page {
+        display: grid;
+        gap: 24px;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .kpis {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .two {
+        grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid rgba(228, 231, 236, 0.45);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .card h2,
+      .card h3 {
+        margin: 0;
+      }
+      .card h2 {
+        font-size: 17px;
+      }
+      .card h3 {
+        font-size: 14px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .kpi {
+        min-height: 144px;
+        display: grid;
+        align-content: start;
+        gap: 8px;
+      }
+      .kpi .value {
+        font-size: 28px;
+        line-height: 1.2;
+        font-weight: 800;
+      }
+      .delta {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--green);
+      }
+      .delta.warn {
+        color: var(--orange);
+      }
+      .chart-card {
+        height: 360px;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .legend span::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        background: var(--accent);
+      }
+      .legend span:last-child::before {
+        background: var(--cyan);
+      }
+      .chart {
+        height: 250px;
+        margin-top: 16px;
+      }
+      .chart svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .gauge {
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .gauge svg {
+        width: 180px;
+      }
+      .gauge strong {
+        font-size: 30px;
+      }
+      .funnel {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+        margin: 18px 0;
+      }
+      .funnel i {
+        display: block;
+        height: 26px;
+        border-radius: 8px;
+        background: var(--accent);
+      }
+      .funnel i:nth-child(1) {
+        width: 98%;
+        opacity: 0.2;
+      }
+      .funnel i:nth-child(2) {
+        width: 80%;
+        opacity: 0.4;
+      }
+      .funnel i:nth-child(3) {
+        width: 62%;
+        opacity: 0.65;
+      }
+      .funnel i:nth-child(4) {
+        width: 42%;
+      }
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .search {
+        height: 44px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: #fff;
+        padding: 0 14px;
+        min-width: 280px;
+        flex: 1;
+        color: var(--text);
+      }
+      .search:focus {
+        outline: 2px solid #b8c7ff;
+        border-color: var(--accent);
+      }
+      select {
+        height: 44px;
+        border: 0;
+        border-radius: 10px;
+        background: #fff;
+        padding: 0 14px;
+        color: #344054;
+      }
+      .table-wrap {
+        overflow: auto;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th {
+        padding: 9px 8px;
+        background: #f7f8fa;
+        color: #98a2b3;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-align: left;
+      }
+      .table td {
+        padding: 13px 8px;
+        border-bottom: 1px solid #f2f4f7;
+        color: #475467;
+      }
+      .table td:first-child {
+        font-weight: 700;
+        color: #344054;
+      }
+      .table td:last-child,
+      .table th:last-child {
+        text-align: right;
+        font-weight: 700;
+        color: #101828;
+      }
+      .status {
+        font-weight: 700;
+      }
+      .status.good {
+        color: var(--green);
+      }
+      .status.warn {
+        color: var(--orange);
+      }
+      .status.info {
+        color: var(--accent);
+      }
+      tr[data-customer] {
+        cursor: pointer;
+      }
+      tr[data-customer]:hover {
+        background: #fafbff;
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 6px;
+      }
+      .tabs button {
+        height: 36px;
+        min-width: 110px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+      }
+      .tabs button.active {
+        background: #eef2ff;
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .heatmap {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin-top: 22px;
+      }
+      .heatmap i {
+        height: 42px;
+        border-radius: 7px;
+        background: var(--accent);
+      }
+      .bars {
+        height: 268px;
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+        background: #f7f8fa;
+        border-radius: 12px;
+        padding: 20px;
+      }
+      .bars i {
+        width: 20%;
+        border-radius: 10px 10px 4px 4px;
+        background: var(--accent);
+      }
+      .insights {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .insight {
+        padding: 12px;
+        border-radius: 10px;
+        background: #eef2ff;
+      }
+      .insight.good {
+        background: #ecfdf3;
+      }
+      .insight.warn {
+        background: #fff7ed;
+      }
+      .insight strong {
+        display: block;
+        color: var(--accent);
+      }
+      .insight.good strong {
+        color: #067647;
+      }
+      .insight.warn strong {
+        color: #b54708;
+      }
+      .insight small {
+        color: #475467;
+      }
+      .workflow-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .workflow {
+        padding: 14px;
+        border-radius: 10px;
+        background: #f7f8fa;
+      }
+      .workflow header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .workflow p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .pill {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--green);
+      }
+      .pill.review {
+        color: var(--orange);
+      }
+      .pill.paused {
+        color: #98a2b3;
+      }
+      .health-bars {
+        height: 300px;
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        border-bottom: 1px solid var(--border);
+        padding: 20px 10px;
+      }
+      .health-bars i {
+        flex: 1;
+        border-radius: 7px 7px 3px 3px;
+        background: var(--accent);
+      }
+      .plan {
+        background: var(--sidebar);
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .plan .eyebrow {
+        color: #6b8aff;
+      }
+      .plan h2 {
+        font-size: 28px;
+        margin: 8px 0;
+      }
+      .plan p {
+        color: #a8b3c5;
+      }
+      .plan-price {
+        font-size: 34px;
+        font-weight: 800;
+        text-align: right;
+      }
+      .usage {
+        min-height: 150px;
+      }
+      .credit-card {
+        height: 180px;
+        background: var(--sidebar-2);
+        color: #fff;
+        border-radius: 14px;
+        padding: 20px;
+        display: grid;
+        align-content: start;
+        gap: 18px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .credit-card small {
+        color: #a8b3c5;
+        font-weight: 400;
+        font-size: 12px;
+      }
+      .settings-layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 16px;
+      }
+      .settings-menu {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+      }
+      .settings-menu button {
+        height: 44px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        text-align: left;
+        padding: 0 12px;
+        color: var(--muted);
+      }
+      .settings-menu button.active {
+        background: #eef2ff;
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .field-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+      .field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #344054;
+      }
+      .field input,
+      .field select {
+        width: 100%;
+        height: 48px;
+        border: 0;
+        border-radius: 10px;
+        background: #f7f8fa;
+        padding: 0 14px;
+      }
+      .preference {
+        height: 64px;
+        border-radius: 10px;
+        background: #f7f8fa;
+        padding: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 650;
+      }
+      .switch {
+        width: 44px;
+        height: 24px;
+        border: 0;
+        border-radius: 12px;
+        background: #d0d5dd;
+        padding: 3px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      .switch::after {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px #98a2b3;
+      }
+      .switch.on {
+        background: var(--accent);
+        justify-content: flex-end;
+      }
+      .deep-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+        gap: 16px;
+      }
+      .detail-hero {
+        display: grid;
+        grid-template-columns: auto minmax(220px, 1fr) minmax(420px, 1.5fr);
+        gap: 18px;
+        align-items: center;
+      }
+      .logo-tile {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .badge-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: var(--accent);
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .badge.good {
+        background: #ecfdf3;
+        color: #067647;
+      }
+      .timeline {
+        display: grid;
+        gap: 10px;
+      }
+      .timeline article {
+        padding: 12px;
+        border-radius: 10px;
+        background: #f7f8fa;
+      }
+      .stepper {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px;
+      }
+      .stepper button {
+        height: 52px;
+        border: 0;
+        border-radius: 10px;
+        background: #f7f8fa;
+        color: var(--muted);
+        text-align: left;
+        padding: 0 12px;
+        font-weight: 700;
+      }
+      .stepper button.active {
+        background: #eef2ff;
+        color: var(--accent);
+      }
+      .builder-block {
+        padding: 16px;
+        border-radius: 10px;
+        background: #f7f8fa;
+        display: grid;
+        gap: 10px;
+      }
+      .builder-select {
+        min-height: 52px;
+        padding: 14px;
+        border-radius: 10px;
+        background: #fff;
+        color: #344054;
+        font-weight: 650;
+      }
+      .plan-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .plan-option {
+        min-height: 300px;
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+      .plan-option.selected {
+        background: #eef2ff;
+        border: 2px solid var(--accent);
+      }
+      .integration-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .integration-card {
+        min-height: 160px;
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+      .integration-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 800;
+      }
+      .secret {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #667085;
+      }
+      .empty {
+        padding: 48px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 30;
+        background: #101828;
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px 16px;
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: 0.2s;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: none;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: none;
+        background: rgba(11, 18, 32, 0.58);
+        padding: 24px;
+        place-items: center;
+      }
+      .modal-backdrop.open {
+        display: grid;
+      }
+      .modal {
+        width: min(560px, 100%);
+        max-height: 90vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 24px 80px rgba(11, 18, 32, 0.28);
+      }
+      .modal header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal h2 {
+        margin: 0;
+      }
+      .modal-close {
+        border: 0;
+        background: transparent;
+        font-size: 24px;
+        color: var(--muted);
+      }
+      .modal form {
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .footer {
+        margin-top: 24px;
+        border-top: 1px solid var(--border);
+        padding: 18px 0 4px;
+        color: #667085;
+        font-size: 11px;
+      }
+      .footer code {
+        color: #475467;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+      }
+      .footer a {
+        color: var(--accent);
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid rgba(51, 92, 255, 0.35);
+        outline-offset: 2px;
+      }
+      @media (max-width: 1000px) {
+        .app {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .sidebar,
+        .main {
+          width: 100%;
+          max-width: 100vw;
+          min-width: 0;
+        }
+        .sidebar {
+          position: static;
+          height: auto;
+          padding: 14px;
+          gap: 12px;
+          overflow: hidden;
+        }
+        .brand,
+        .workspace,
+        .profile {
+          display: none;
+        }
+        .nav {
+          display: flex;
+          width: 100%;
+          max-width: 100%;
+          overflow: auto;
+        }
+        .nav button {
+          min-width: max-content;
+        }
+        .main {
+          padding: 20px;
+        }
+        .kpis,
+        .three {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .two,
+        .settings-layout,
+        .deep-grid,
+        .detail-hero,
+        .plan-options,
+        .integration-grid {
+          grid-template-columns: 1fr;
+        }
+        .stepper {
+          grid-template-columns: 1fr 1fr;
+        }
+        .detail-hero .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .topbar {
+          height: auto;
+          align-items: flex-start;
+        }
+        .actions {
+          flex-wrap: wrap;
+        }
+        .chart-card {
+          height: auto;
+        }
+        .settings-menu {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .main {
+          padding: 14px;
+        }
+        .topbar {
+          display: grid;
+        }
+        .actions {
+          justify-content: stretch;
+        }
+        .actions > * {
+          flex: 1;
+        }
+        .kpis,
+        .three,
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          flex-wrap: wrap;
+        }
+        .toolbar > * {
+          width: 100%;
+        }
+        .tabs {
+          overflow: auto;
+        }
+        .card {
+          padding: 16px;
+        }
+        .settings-menu {
+          grid-template-columns: 1fr 1fr;
+        }
+        .table {
+          min-width: 700px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+          animation: none !important;
+        }
+        .button:hover {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="10" fill="#335CFF" />
+            <circle cx="16" cy="16" r="5" fill="#fff" />
+            <ellipse
+              cx="16"
+              cy="16"
+              rx="11"
+              ry="5.5"
+              fill="none"
+              stroke="#fff"
+              stroke-width="1.5"
+              transform="rotate(-28 16 16)"
+            /></svg
+          >Orbit
+        </div>
+        <div class="workspace">
+          <span class="eyebrow">工作区</span><strong>Northstar Labs⌄</strong>
+        </div>
+        <nav class="nav" id="nav"></nav>
+        <div class="profile">
+          <span class="avatar">LS</span
+          ><span>Lena Stone<small>管理员</small></span>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h1 id="page-title"></h1>
+            <p id="page-subtitle"></p>
+          </div>
+          <div class="actions" id="page-actions"></div>
+        </header>
+        <section class="page" id="page" aria-live="polite"></section>
+        <footer class="footer">
+          来源项目：Orbit SaaS Analytics Dashboard ·
+          <code
+            >/Users/liushiyuwin/projects/design-runner-skill/examples/orbit-saas</code
+          >
+          · Pi session：<code>01a04127-b179-79c5-99cb-235b8fa6a690</code>
+          ·
+          <a
+            href="https://ardot.tencent.com/file/719319930015525"
+            target="_blank"
+            rel="noreferrer"
+            >Ardot 设计文件</a
+          >
+          · 本页零远程请求，状态仅保存在本机。
+        </footer>
+      </main>
+    </div>
+    <div class="modal-backdrop" id="modal-backdrop" role="presentation">
+      <section
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <header>
+          <h2 id="modal-title"></h2>
+          <button
+            class="modal-close"
+            data-action="close-modal"
+            aria-label="关闭"
+          >
+            ×
+          </button>
+        </header>
+        <div id="modal-body"></div>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script>
+      const icons = {
+        overview:
+          '<svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="6" height="6" rx="2"/><rect x="12" y="2" width="6" height="6" rx="2"/><rect x="2" y="12" width="6" height="6" rx="2"/><rect x="12" y="12" width="6" height="6" rx="2"/></svg>',
+        analytics:
+          '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 16V10M8 16V5M13 16V8M18 16V2"/></svg>',
+        customers:
+          '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="3"/><path d="M2.5 16c.3-3.1 2-4.5 4.5-4.5s4.2 1.4 4.5 4.5M12 5.2c1.9.1 3 1.2 3 2.8s-1.1 2.7-3 2.8M13.5 12c2.2.5 3.5 1.8 3.8 4"/></svg>',
+        automations:
+          '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11.5 1.8 4.4 11H9l-.5 7.2L15.6 9H11z"/></svg>',
+        billing:
+          '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="16" height="12" rx="3"/><path d="M2 8h16"/></svg>',
+        settings:
+          '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4"/></svg>',
+      };
+      const meta = {
+        overview: ["概览", "今天工作区的关键指标与最新变化。"],
+        analytics: ["分析", "探索收入、留存与产品参与趋势。"],
+        customers: ["客户", "管理账户健康、生命周期与扩张机会。"],
+        automations: ["自动化", "构建工作流、监控执行并恢复失败任务。"],
+        billing: ["账单", "管理套餐、用量、发票与支付方式。"],
+        settings: ["设置", "配置工作区、安全、集成与通知。"],
+        customerDetail: ["客户详情", "查看账户健康、联系人与生命周期。"],
+        automationBuilder: ["自动化构建器", "配置触发器、条件、动作与测试。"],
+        planManagement: ["套餐管理", "比较套餐并确认下一周期账单配置。"],
+        teamPermissions: ["团队与权限", "管理成员、角色、访问和邀请。"],
+        securityApi: ["安全与 API", "保护访问、管理凭据并审查安全状态。"],
+        integrations: ["集成", "连接产品数据、通信与交付工具。"],
+      };
+      const navItems = [
+        "overview",
+        "analytics",
+        "customers",
+        "automations",
+        "billing",
+        "settings",
+      ];
+      const route = location.hash.slice(1);
+      const state = {
+        page: meta[route]
+          ? route
+          : localStorage.getItem("orbit-page") || "overview",
+        range: "30天",
+        analyticsTab: "revenue",
+        segment: "all",
+        query: "",
+        selectedCustomer: 0,
+        builderStep: 0,
+        builderTested: false,
+        selectedPlan: "Business",
+        toggles: { weekly: true, alerts: true, marketing: false, mfa: true },
+        settingsSection: "general",
+        integrations: {
+          slack: true,
+          hubspot: true,
+          stripe: true,
+          salesforce: false,
+          segment: false,
+          intercom: false,
+          linear: false,
+          snowflake: false,
+          webhook: false,
+        },
+      };
+      const customers = [
+        ["Acme Studio", "Business", "Maya Chen", "健康", "$2,490"],
+        ["Nova Labs", "Pro", "Ibrahim Ali", "风险", "$980"],
+        ["Cedar Inc.", "Business", "Priya Nair", "健康", "$1,840"],
+        ["Flux Systems", "Enterprise", "Jonah Kim", "健康", "$5,200"],
+        ["Northwind", "Pro", "Elena Ross", "试用", "$1,120"],
+        ["Kiteworks", "Enterprise", "Mia Wong", "扩张", "$4,460"],
+      ];
+      const workflows = [
+        ["试用期入门序列", "新试用", "3,842", "99.6%", "ACTIVE"],
+        ["续费风险恢复", "健康度低于 55", "642", "97.8%", "ACTIVE"],
+        ["支付失败重试", "发票失败", "188", "91.4%", "REVIEW"],
+        ["用量上限通知", "用量超过 80%", "1,104", "99.9%", "PAUSED"],
+      ];
+      function esc(value) {
+        return String(value).replace(
+          /[&<>"']/g,
+          (ch) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[ch],
+        );
+      }
+      function setMarkup(target, markup) {
+        const parsed = new DOMParser().parseFromString(
+          `<body>${markup}</body>`,
+          "text/html",
+        );
+        parsed
+          .querySelectorAll("script,iframe,object,embed,link,meta,base,style")
+          .forEach((node) => node.remove());
+        parsed.querySelectorAll("*").forEach((el) =>
+          [...el.attributes].forEach((attr) => {
+            const name = attr.name.toLowerCase(),
+              value = attr.value.trim().toLowerCase();
+            if (
+              name.startsWith("on") ||
+              name === "srcdoc" ||
+              (["href", "src", "xlink:href"].includes(name) &&
+                value.startsWith("javascript:"))
+            )
+              el.removeAttribute(attr.name);
+          }),
+        );
+        const fragment = document.createDocumentFragment();
+        [...parsed.body.childNodes].forEach((node) =>
+          fragment.append(document.importNode(node, true)),
+        );
+        target.replaceChildren(fragment);
+      }
+      function analyticsHeading(tab) {
+        if (tab === "retention") return "留存趋势";
+        if (tab === "cohorts") return "同期群趋势";
+        return "净收入";
+      }
+      function customerStatusClass(status) {
+        if (status === "健康") return "good";
+        if (status === "风险" || status === "试用") return "warn";
+        return "info";
+      }
+      function workflowStatusClass(status) {
+        if (status === "REVIEW") return "review";
+        if (status === "PAUSED") return "paused";
+        return "";
+      }
+      function nextRange(range) {
+        if (range === "30天") return "90天";
+        if (range === "90天") return "7天";
+        return "30天";
+      }
+      function toggleClass(value) {
+        return value ? "on" : "";
+      }
+      function submitToast(page) {
+        if (page === "customerDetail") return "账户已保存";
+        if (page === "teamPermissions") return "邀请已发送";
+        if (page === "securityApi") return "API 密钥已创建";
+        return "已创建";
+      }
+      const deepBase = {
+        customerDetail: "customers",
+        automationBuilder: "automations",
+        planManagement: "billing",
+        teamPermissions: "settings",
+        securityApi: "settings",
+        integrations: "settings",
+      };
+      function navBase(page) {
+        return deepBase[page] || page;
+      }
+      function go(page, replace = false) {
+        state.page = page;
+        const method = replace ? "replaceState" : "pushState";
+        history[method]({ page }, "", `#${page}`);
+        render();
+      }
+      function nav() {
+        const active = navBase(state.page);
+        setMarkup(
+          document.querySelector("#nav"),
+          navItems
+            .map(
+              (k) =>
+                `<button data-page="${k}" class="${active === k ? "active" : ""}" aria-current="${active === k ? "page" : "false"}">${icons[k]}<span>${meta[k][0]}</span></button>`,
+            )
+            .join(""),
+        );
+      }
+      function actions() {
+        const el = document.querySelector("#page-actions");
+        const deepActions = {
+          customerDetail: ["customers", "← 客户", "edit-customer", "编辑账户"],
+          automationBuilder: [
+            "automations",
+            "取消",
+            "save-automation",
+            "保存并启用",
+          ],
+          planManagement: ["billing", "← 账单", "confirm-plan", "确认套餐"],
+          teamPermissions: ["settings", "← 设置", "invite-member", "邀请成员"],
+          securityApi: ["settings", "← 设置", "rotate-key", "轮换 API 密钥"],
+          integrations: [
+            "settings",
+            "← 设置",
+            "browse-integrations",
+            "浏览目录",
+          ],
+        };
+        if (deepActions[state.page]) {
+          const [back, backLabel, action, actionLabel] =
+            deepActions[state.page];
+          setMarkup(
+            el,
+            `<button class="button" data-page="${back}">${backLabel}</button><button class="button primary" data-action="${action}">${actionLabel}</button>`,
+          );
+          return;
+        }
+        if (state.page === "settings") {
+          setMarkup(
+            el,
+            '<button class="button" data-action="discard-settings">放弃更改</button><button class="button primary" data-action="save-settings">保存更改</button>',
+          );
+          return;
+        }
+        setMarkup(
+          el,
+          `<button class="select-button" data-action="cycle-range">最近 ${state.range}⌄</button><button class="button primary" data-action="export">导出</button>`,
+        );
+      }
+      function lineChart() {
+        return '<svg viewBox="0 0 704 240" fill="none" aria-label="收入趋势"><path d="M0 28H704M0 82H704M0 136H704M0 190H704" stroke="#EEF1F5"/><path d="M0 202C60 190 78 166 126 171C174 176 198 123 249 130C300 137 329 88 378 100C427 112 459 62 510 72C561 82 601 37 704 28V224H0Z" fill="#335CFF" opacity=".1"/><path d="M0 202C60 190 78 166 126 171C174 176 198 123 249 130C300 137 329 88 378 100C427 112 459 62 510 72C561 82 601 37 704 28" stroke="#335CFF" stroke-width="3"/><path d="M0 220C72 213 96 198 151 201C206 204 233 176 286 181C339 186 381 154 433 163C485 172 551 126 704 121" stroke="#06B6D4" stroke-width="2" stroke-dasharray="5 5"/></svg>';
+      }
+      function overview() {
+        return `<div class="grid kpis">${[
+          ["月度经常性收入", "$128.4K", "+12.5%"],
+          ["活跃客户", "8,429", "+8.2%"],
+          ["试用转化率", "18.7%", "+2.1 个百分点"],
+          ["流失率", "2.4%", "−0.6 个百分点"],
+        ]
+          .map(
+            (x) =>
+              `<article class="card kpi"><span class="muted">${x[0]}</span><strong class="value">${x[1]}</strong><span class="delta">${x[2]} · 较上月</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="grid two"><article class="card chart-card"><div class="card-head"><div><h2>收入概览</h2><span class="muted">MRR 与扩张收入</span></div><div class="legend"><span>MRR</span><span>扩张</span></div></div><div class="chart">${lineChart()}</div></article><article class="card chart-card gauge"><h2>套餐健康度</h2><svg viewBox="0 0 180 150" fill="none"><path d="M25 120a65 65 0 0 1 130 0" stroke="#EEF1F5" stroke-width="16" stroke-linecap="round"/><path d="M25 120a65 65 0 0 1 105-55" stroke="#335CFF" stroke-width="16" stroke-linecap="round"/></svg><strong>82%</strong><span class="muted">客户正在使用付费套餐</span></article></div><div class="grid two"><article class="card"><h2>转化漏斗</h2><span class="muted">从访客到付费客户</span><div class="funnel"><i></i><i></i><i></i><i></i></div><div class="card-head"><span class="muted">总体转化</span><strong style="color:var(--accent);font-size:20px">18.7%</strong></div></article><article class="card"><div class="card-head"><div><h2>最近客户</h2><span class="muted">最新升级与续费</span></div><button class="button soft" data-page="customers">查看全部</button></div>${customerTable(customers.slice(0, 4))}</article></div>`;
+      }
+      function analytics() {
+        const tabs = ["overview", "revenue", "retention", "cohorts"];
+        return `<div class="tabs">${tabs.map((t) => `<button data-analytics-tab="${t}" class="${state.analyticsTab === t ? "active" : ""}">${{ overview: "概览", revenue: "收入", retention: "留存", cohorts: "同期群" }[t]}</button>`).join("")}</div><div class="grid two"><article class="card chart-card"><div class="card-head"><h2>${analyticsHeading(state.analyticsTab)}</h2><strong class="delta">$142.8K · +14.2%</strong></div><div class="chart">${lineChart()}</div></article><article class="card"><h2>同期群留存</h2><span class="muted">周度产品回访率</span><div class="heatmap">${Array.from({ length: 24 }, (_, i) => `<i style="opacity:${1 - (i % 6) * 0.12}"></i>`).join("")}</div></article></div><div class="grid two"><article class="card"><h2>获客渠道</h2><div class="bars"><i style="height:88%"></i><i style="height:68%;background:var(--cyan)"></i><i style="height:54%;background:var(--green)"></i><i style="height:38%;background:#b8c7ff"></i></div></article><article class="card"><h2>关键洞察</h2><div class="insights"><div class="insight"><strong>扩张收入正在加速</strong><small>升级贡献本月净新增 MRR 的 21%。</small></div><div class="insight good"><strong>第四周留存改善</strong><small>新入门提醒使回访率提升 6.4 个百分点。</small></div><div class="insight warn"><strong>付费获客需要关注</strong><small>CAC 上升 9%，转化率保持不变。</small></div></div></article></div>`;
+      }
+      function customerTable(rows = customers) {
+        return `<div class="table-wrap"><table class="table"><thead><tr><th>账户</th><th>套餐</th><th>负责人</th><th>健康度</th><th>MRR</th></tr></thead><tbody>${rows.map((r, i) => `<tr data-customer="${customers.indexOf(r)}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td><span class="status ${customerStatusClass(r[3])}">${esc(r[3])}</span></td><td>${esc(r[4])}</td></tr>`).join("")}</tbody></table></div>`;
+      }
+      function customersPage() {
+        const q = state.query.toLowerCase();
+        const rows = customers.filter(
+          (r) =>
+            (state.segment === "all" || r[1] === state.segment) &&
+            r.join(" ").toLowerCase().includes(q),
+        );
+        return `<div class="grid three">${[
+          ["客户总数", "8,429", "+8.2% 本月"],
+          ["健康账户", "7,108", "占组合 84.3%"],
+          ["扩张管道", "$48.6K", "312 个合格账户"],
+        ]
+          .map(
+            (x) =>
+              `<article class="card kpi"><span class="muted">${x[0]}</span><strong class="value">${x[1]}</strong><span class="delta">${x[2]}</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="toolbar"><input class="search" id="customer-search" placeholder="搜索客户、域名或负责人…" value="${esc(state.query)}"><select id="segment"><option value="all">全部分组</option><option>Pro</option><option>Business</option><option>Enterprise</option></select><button class="button primary" data-action="add-customer">+ 添加客户</button></div><article class="card"><h2>客户目录</h2><p class="muted">账户健康、套餐、负责人和经常性收入</p><div id="customer-rows">${customerTable(rows)}</div></article>`;
+      }
+      function automations() {
+        return `<div class="grid three">${[
+          ["活跃工作流", "18", "本周更新 3 个"],
+          ["24 小时执行", "12,408", "较昨日 +18.4%"],
+          ["成功率", "99.2%", "42 次需要复核"],
+        ]
+          .map(
+            (x, i) =>
+              `<article class="card kpi"><span class="muted">${x[0]}</span><strong class="value">${x[1]}</strong><span class="delta ${i === 2 ? "warn" : ""}">${x[2]}</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="toolbar"><input class="search" id="workflow-search" placeholder="搜索工作流和触发器…"><button class="button primary" data-action="new-automation">+ 新建自动化</button></div><div class="grid two"><article class="card"><div class="card-head"><h2>工作流</h2><span class="muted">全部状态⌄</span></div><div class="workflow-list" id="workflow-list">${workflows.map((w, i) => `<article class="workflow"><header><strong>${esc(w[0])}</strong><button class="pill ${workflowStatusClass(w[4])}" data-action="toggle-workflow" data-index="${i}">${esc(w[4])}</button></header><p>触发：${esc(w[1])} · ${esc(w[2])} 次执行 · ${esc(w[3])} 成功</p></article>`).join("")}</div></article><article class="card"><h2>执行健康</h2><p class="muted">最近 24 小时</p><div class="health-bars">${[55, 62, 48, 68, 57, 72, 64, 76].map((h) => `<i style="height:${h}%"></i>`).join("")}</div><div class="insight warn"><strong>42 次失败执行</strong><small>点击工作流可查看并重试。</small></div></article></div>`;
+      }
+      function billing() {
+        return `<article class="card plan"><div><span class="eyebrow">当前套餐</span><h2>Orbit Business</h2><p>高级分析、自动化与 30 个团队席位。</p></div><div class="plan-price">$249<small style="display:block;color:#a8b3c5;font-size:12px;font-weight:400">每月</small></div><button class="button primary" data-action="manage-plan">管理套餐</button></article><div class="grid three">${[
+          ["存储", "68 GB / 100 GB", "已用 68%"],
+          ["API 调用", "2.7M / 5M", "已用 54%"],
+          ["团队席位", "24 / 30", "可用 6 个"],
+        ]
+          .map(
+            (x) =>
+              `<article class="card usage"><span class="muted">${x[0]}</span><h2 style="font-size:20px;margin-top:10px">${x[1]}</h2><span class="delta">${x[2]}</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="grid two"><article class="card"><div class="card-head"><h2>发票历史</h2><button class="button soft" data-action="download-invoices">下载全部</button></div><div class="table-wrap"><table class="table"><thead><tr><th>日期</th><th>发票</th><th>状态</th><th>金额</th></tr></thead><tbody>${[
+          ["2026-08-01", "INV-2084"],
+          ["2026-07-01", "INV-1967"],
+          ["2026-06-01", "INV-1842"],
+          ["2026-05-01", "INV-1719"],
+        ]
+          .map(
+            (x) =>
+              `<tr><td>${x[0]}</td><td>${x[1]}</td><td><span class="status good">已支付</span></td><td>$249.00</td></tr>`,
+          )
+          .join(
+            "",
+          )}</tbody></table></div></article><article class="card"><h2>支付方式</h2><div class="credit-card">•••• •••• •••• 4821<small>有效期 09/29</small></div><button class="button soft" style="width:100%;margin-top:14px" data-action="update-payment">更新支付方式</button><h3 style="margin-top:16px">账单地址</h3><p class="muted">Northstar Labs · Market Street 21 号 · 旧金山</p></article></div>`;
+      }
+      function settings() {
+        const menu = [
+          ["general", "常规"],
+          ["team", "团队与权限"],
+          ["security", "安全"],
+          ["integrations", "集成"],
+          ["notifications", "通知"],
+          ["api", "API 与 Webhook"],
+        ];
+        const content =
+          state.settingsSection === "general"
+            ? `<h2 style="font-size:20px">常规</h2><p class="muted">基本工作区详情与默认设置。</p><div class="field-grid"><div class="field"><label>工作区名称</label><input value="Northstar Labs" data-setting aria-label="工作区名称"></div><div class="field"><label>工作区域名</label><input value="northstar.orbit.app" data-setting aria-label="工作区域名"></div></div><div class="field" style="margin-top:16px"><label>默认时区</label><select data-setting aria-label="默认时区"><option>太平洋时间 (UTC−08:00)</option><option>中国标准时间 (UTC+08:00)</option></select></div><h2 style="font-size:16px;margin-top:28px">通信偏好</h2><p class="muted">选择工作区默认接收的内容。</p>${[
+                ["weekly", "每周绩效报告"],
+                ["alerts", "产品与安全提醒"],
+                ["marketing", "产品技巧与营销"],
+              ]
+                .map(
+                  (x) =>
+                    `<div class="preference"><span>${x[1]}</span><button class="switch ${toggleClass(state.toggles[x[0]])}" data-toggle="${x[0]}" aria-label="${x[1]}" aria-pressed="${state.toggles[x[0]]}"></button></div>`,
+                )
+                .join("")}`
+            : `<div class="empty"><h2>${menu.find((x) => x[0] === state.settingsSection)[1]}</h2><p>此区域展示对应配置、权限和审计信息。</p><button class="button primary" data-action="show-toast">查看示例配置</button></div>`;
+        return `<div class="settings-layout"><aside class="card settings-menu"><strong>工作区设置</strong>${menu.map((x) => `<button data-settings="${x[0]}" class="${state.settingsSection === x[0] ? "active" : ""}">${x[1]}</button>`).join("")}</aside><section class="card">${content}</section></div>`;
+      }
+      function customerDetail() {
+        const c = customers[state.selectedCustomer] || customers[0];
+        return `<article class="card detail-hero"><div class="logo-tile">${esc(
+          c[0]
+            .split(/\s+/)
+            .map((x) => x[0])
+            .join("")
+            .slice(0, 2),
+        )}</div><div><h2 style="font-size:24px">${esc(c[0])}</h2><p class="muted">${esc(c[0].toLowerCase().replace(/\s+/g, ""))}.com · 2024 年 4 月加入</p><div class="badge-row"><span class="badge">${esc(c[1])}</span><span class="badge good">${esc(c[3])}</span></div></div><div class="grid three"><div class="card"><span class="muted">MRR</span><h2>${esc(c[4])}</h2></div><div class="card"><span class="muted">席位</span><h2>42 / 50</h2></div><div class="card"><span class="muted">续费</span><h2>34 天</h2></div></div></article><div class="deep-grid"><article class="card"><h2>账户健康</h2><div class="chart">${lineChart()}</div><div class="grid three"><div class="insight good"><strong>86 / 100</strong><small>健康分</small></div><div class="insight"><strong>+14.2%</strong><small>参与度</small></div><div class="insight warn"><strong>2</strong><small>未结工单</small></div></div><h2 style="margin-top:18px">生命周期</h2><div class="timeline"><article><strong>扩展到 42 个席位</strong><small class="muted">8 月 18 日 · +$640 MRR</small></article><article><strong>季度回顾已完成</strong><small class="muted">8 月 4 日 · 健康分 +8</small></article><article><strong>续费工作流已启动</strong><small class="muted">7 月 29 日 · 距续费 34 天</small></article></div></article><aside class="card"><h2>账户详情</h2><div class="insights"><div class="insight"><strong>负责人</strong><small>Maya Chen</small></div><div class="insight"><strong>客户成功经理</strong><small>Lena Stone</small></div><div class="insight"><strong>区域</strong><small>北美</small></div></div><h3 style="margin-top:20px">主要联系人</h3><div class="insight good"><strong>Jordan Lee · 运营副总裁</strong><small>jordan@acmestudio.com · 3 天前联系</small></div><button class="button primary" style="width:100%;margin-top:16px" data-action="customer-notes">查看备注与活动</button><button class="button soft" style="width:100%;margin-top:10px" data-action="edit-customer">编辑账户</button></aside></div>`;
+      }
+      function automationBuilder() {
+        const steps = ["触发器", "条件", "动作", "测试并启用"];
+        return `<div class="stepper">${steps.map((s, i) => `<button data-builder-step="${i}" class="${state.builderStep === i ? "active" : ""}">0${i + 1} · ${s}</button>`).join("")}</div><div class="deep-grid"><article class="card"><div class="builder-block"><h3>发生此事件时</h3><div class="builder-select">创建新的试用账户⌄</div></div><div class="builder-block" style="margin-top:14px"><h3>仅当满足</h3><div class="builder-select">套餐为 Pro 或 Business · 区域未被限制</div><button class="button soft" data-action="add-condition">+ 添加条件</button></div><div class="builder-block" style="margin-top:14px"><h3>执行以下动作</h3><div class="insight"><strong>发送入门邮件</strong><small>模板：欢迎使用 Orbit</small></div><button class="button soft" data-action="add-action">+ 添加动作</button></div></article><aside class="card"><h2>测试执行</h2><div class="insight"><strong>样本账户</strong><small>Nova Labs · Pro 试用</small></div><div class="insight good" style="min-height:220px"><strong>${state.builderTested ? "测试通过" : "准备测试"}</strong><small>1. 触发器匹配<br>2. 条件为真<br>3. 邮件动作将执行</small></div><button class="button primary" style="width:100%" data-action="run-builder-test">运行测试</button></aside></div>`;
+      }
+      function planManagement() {
+        const plans = [
+          ["Pro", "$99", "核心分析、10 个席位、1M API 调用"],
+          ["Business", "$249", "高级分析、30 个席位、无限自动化"],
+          ["Enterprise", "定制", "无限席位、SSO、审计日志与专属支持"],
+        ];
+        return `<div class="plan-options">${plans.map((p) => `<article class="card plan-option ${state.selectedPlan === p[0] ? "selected" : ""}"><span class="eyebrow">${p[0] === "Business" ? "当前 · 推荐" : "套餐"}</span><h2 style="font-size:24px">${p[0]}</h2><strong style="font-size:28px">${p[1]}${p[1].startsWith("$") ? " / 月" : ""}</strong><p class="muted">${p[2]}</p><button class="button ${state.selectedPlan === p[0] ? "primary" : "soft"}" data-plan="${p[0]}">${state.selectedPlan === p[0] ? "已选择" : "选择套餐"}</button></article>`).join("")}</div><div class="deep-grid"><article class="card"><h2>功能比较</h2><table class="table"><thead><tr><th>功能</th><th>Pro</th><th>Business</th><th>Enterprise</th></tr></thead><tbody><tr><td>团队席位</td><td>10</td><td>30</td><td>无限</td></tr><tr><td>API 调用</td><td>1M</td><td>5M</td><td>定制</td></tr><tr><td>自动化</td><td>5</td><td>无限</td><td>无限</td></tr><tr><td>SAML SSO</td><td>—</td><td>—</td><td>包含</td></tr></tbody></table></article><aside class="card"><h2>选择摘要</h2><div class="insights"><div class="insight"><strong>当前</strong><small>Business · $249</small></div><div class="insight"><strong>新选择</strong><small>${state.selectedPlan}</small></div><div class="insight"><strong>下张发票</strong><small>2026 年 9 月 1 日</small></div></div><button class="button primary" style="width:100%;margin-top:18px" data-action="confirm-plan">确认选择</button></aside></div>`;
+      }
+      function teamPermissions() {
+        const members = [
+          ["Lena Stone", "lena@northstar.io", "管理员", "在线"],
+          ["Maya Chen", "maya@northstar.io", "经理", "8 分钟前"],
+          ["Jonah Kim", "jonah@northstar.io", "成员", "1 小时前"],
+          ["Priya Nair", "priya@northstar.io", "查看者", "昨天"],
+        ];
+        return `<div class="grid three">${[
+          ["成员", "24", "可用 6 个席位"],
+          ["管理员", "4", "已强制 MFA"],
+          ["待处理邀请", "3", "最早发送于 2 天前"],
+        ]
+          .map(
+            (x) =>
+              `<article class="card kpi"><span class="muted">${x[0]}</span><strong class="value">${x[1]}</strong><span class="delta">${x[2]}</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="toolbar"><input class="search" placeholder="按姓名或邮箱搜索成员…" aria-label="搜索成员"><button class="button primary" data-action="invite-member">+ 邀请成员</button></div><div class="deep-grid"><article class="card"><h2>工作区成员</h2><div class="table-wrap"><table class="table"><thead><tr><th>成员</th><th>角色</th><th>状态</th><th>最后活跃</th></tr></thead><tbody>${members.map((m, i) => `<tr><td>${m[0]}<br><small class="muted">${m[1]}</small></td><td><select data-role="${i}" aria-label="${m[0]} 的角色"><option>${m[2]}</option><option>管理员</option><option>经理</option><option>成员</option><option>查看者</option></select></td><td><span class="status good">活跃</span></td><td>${m[3]}</td></tr>`).join("")}</tbody></table></div></article><aside class="card"><h2>角色权限</h2><div class="insights"><div class="insight"><strong>管理员</strong><small>完整工作区、账单、安全和成员权限。</small></div><div class="insight"><strong>经理</strong><small>管理客户、自动化、报告与成员。</small></div><div class="insight"><strong>成员</strong><small>创建和编辑产品数据。</small></div><div class="insight"><strong>查看者</strong><small>只读访问仪表盘与共享报告。</small></div></div></aside></div>`;
+      }
+      function securityApi() {
+        const keys = [
+          ["生产服务器", "orb_live_••••••••7F21", "4 分钟前"],
+          ["数仓同步", "orb_live_••••••••A912", "2 小时前"],
+          ["预发布", "orb_test_••••••••118C", "昨天"],
+        ];
+        return `<div class="grid three">${[
+          ["安全分", "92 / 100", "关键控制已启用"],
+          ["MFA 覆盖", "100%", "管理员必须启用"],
+          ["活跃 API 密钥", "3", "最早 61 天前轮换"],
+        ]
+          .map(
+            (x) =>
+              `<article class="card kpi"><span class="muted">${x[0]}</span><strong class="value">${x[1]}</strong><span class="delta">${x[2]}</span></article>`,
+          )
+          .join(
+            "",
+          )}</div><div class="deep-grid"><article class="card"><h2>API 密钥</h2><p class="muted">生产与服务器端集成凭据。</p><div class="workflow-list">${keys.map((k, i) => `<article class="workflow"><header><strong>${k[0]}</strong><button class="pill review" data-action="rotate-key" data-index="${i}">轮换</button></header><p class="secret">${k[1]} · 最后使用 ${k[2]}</p></article>`).join("")}</div><button class="button soft" style="width:100%;margin-top:12px" data-action="create-key">+ 创建 API 密钥</button></article><aside class="card"><h2>安全控制</h2><div class="preference"><span>SAML SSO</span><button class="switch" aria-label="SAML SSO"></button></div><div class="preference"><span>管理员 MFA</span><button class="switch ${state.toggles.mfa ? "on" : ""}" data-toggle="mfa" aria-label="管理员 MFA" aria-pressed="${state.toggles.mfa}"></button></div><div class="preference"><span>IP 允许列表</span><button class="switch on" aria-label="IP 允许列表"></button></div><div class="insight"><strong>审计日志</strong><small>最近 7 天 8 个安全事件，无未解决的严重问题。</small></div></aside></div>`;
+      }
+      function integrationsPage() {
+        const apps = [
+          ["slack", "Slack", "团队沟通"],
+          ["hubspot", "HubSpot", "CRM 同步"],
+          ["stripe", "Stripe", "账单与支付"],
+          ["salesforce", "Salesforce", "客户关系"],
+          ["segment", "Segment", "产品事件"],
+          ["intercom", "Intercom", "客户支持"],
+          ["linear", "Linear", "产品工单"],
+          ["snowflake", "Snowflake", "数仓同步"],
+          ["webhook", "自定义 Webhook", "实时事件"],
+        ];
+        return `<div class="integration-grid">${apps.map((a, i) => `<article class="card integration-card"><span class="integration-mark" style="background:${["#4A154B", "#FF7A59", "#635BFF", "#00A1E0", "#52BD94", "#1F8DED", "#5E6AD2", "#29B5E8", "#344054"][i]}">${a[1][0]}</span><h2>${a[1]}</h2><p class="muted">${a[2]}</p><button class="button ${state.integrations[a[0]] ? "soft" : "primary"}" data-integration="${a[0]}">${state.integrations[a[0]] ? "已连接 · 管理" : "连接"}</button></article>`).join("")}</div>`;
+      }
+      const renderers = {
+        overview,
+        analytics,
+        customers: customersPage,
+        automations,
+        billing,
+        settings,
+        customerDetail,
+        automationBuilder,
+        planManagement,
+        teamPermissions,
+        securityApi,
+        integrations: integrationsPage,
+      };
+      function render() {
+        nav();
+        actions();
+        document.querySelector("#page-title").textContent = meta[state.page][0];
+        document.querySelector("#page-subtitle").textContent =
+          meta[state.page][1];
+        setMarkup(document.querySelector("#page"), renderers[state.page]());
+        localStorage.setItem("orbit-page", state.page);
+        if (state.page === "customers") {
+          document.querySelector("#segment").value = state.segment;
+        }
+      }
+      function toast(text) {
+        const t = document.querySelector("#toast");
+        t.textContent = text;
+        t.classList.add("show");
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+      }
+      function openModal(title, body) {
+        document.querySelector("#modal-title").textContent = title;
+        setMarkup(document.querySelector("#modal-body"), body);
+        document.querySelector("#modal-backdrop").classList.add("open");
+        setTimeout(
+          () => document.querySelector(".modal input, .modal button")?.focus(),
+          0,
+        );
+      }
+      function closeModal() {
+        document.querySelector("#modal-backdrop").classList.remove("open");
+      }
+      function form(title, fields, submit) {
+        return `<form id="modal-form">${fields.map((x) => `<div class="field"><label>${x[0]}</label><input name="${x[1]}" required value="${x[2] || ""}"></div>`).join("")}<div class="modal-actions"><button type="button" class="button" data-action="close-modal">取消</button><button class="button primary" type="submit">${submit}</button></div></form>`;
+      }
+      document.addEventListener("click", (e) => {
+        const customerRow = e.target.closest("tr[data-customer]");
+        if (customerRow) {
+          state.selectedCustomer = Number(customerRow.dataset.customer);
+          go("customerDetail");
+          return;
+        }
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.dataset.page) {
+          go(b.dataset.page);
+          return;
+        }
+        if (b.dataset.analyticsTab) {
+          state.analyticsTab = b.dataset.analyticsTab;
+          render();
+          return;
+        }
+        if (b.dataset.settings) {
+          const settingsRoutes = {
+            team: "teamPermissions",
+            security: "securityApi",
+            integrations: "integrations",
+            api: "securityApi",
+          };
+          if (settingsRoutes[b.dataset.settings])
+            go(settingsRoutes[b.dataset.settings]);
+          else {
+            state.settingsSection = b.dataset.settings;
+            render();
+          }
+          return;
+        }
+        if (b.dataset.toggle) {
+          state.toggles[b.dataset.toggle] = !state.toggles[b.dataset.toggle];
+          render();
+          return;
+        }
+        if (b.dataset.builderStep) {
+          state.builderStep = Number(b.dataset.builderStep);
+          render();
+          return;
+        }
+        if (b.dataset.plan) {
+          state.selectedPlan = b.dataset.plan;
+          render();
+          return;
+        }
+        if (b.dataset.integration) {
+          const key = b.dataset.integration;
+          state.integrations[key] = !state.integrations[key];
+          render();
+          toast(state.integrations[key] ? "集成已连接" : "集成已断开");
+          return;
+        }
+        const a = b.dataset.action;
+        if (a === "cycle-range") {
+          state.range = nextRange(state.range);
+          actions();
+          toast(`时间范围已切换为 ${state.range}`);
+        }
+        if (a === "export") {
+          const blob = new Blob(
+            [
+              JSON.stringify(
+                { page: state.page, range: state.range, customers, workflows },
+                null,
+                2,
+              ),
+            ],
+            { type: "application/json" },
+          );
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "orbit-dashboard-export.json";
+          link.click();
+          URL.revokeObjectURL(url);
+          toast("数据已导出");
+        }
+        if (a === "add-customer") {
+          openModal(
+            "添加客户",
+            form(
+              "",
+              [
+                ["账户名称", "name"],
+                ["套餐", "plan", "Pro"],
+                ["负责人", "owner"],
+              ],
+              "添加客户",
+            ),
+          );
+        }
+        if (a === "new-automation") {
+          state.builderStep = 0;
+          state.builderTested = false;
+          go("automationBuilder");
+        }
+        if (a === "manage-plan") {
+          go("planManagement");
+        }
+        if (a === "update-payment") {
+          openModal(
+            "更新支付方式",
+            form(
+              "",
+              [
+                ["持卡人", "name"],
+                ["卡号", "card"],
+                ["有效期", "expiry"],
+              ],
+              "保存支付方式",
+            ),
+          );
+        }
+        if (a === "edit-customer") {
+          const c = customers[state.selectedCustomer] || customers[0];
+          openModal(
+            "编辑账户",
+            form(
+              "",
+              [
+                ["账户名称", "name", c[0]],
+                ["套餐", "plan", c[1]],
+                ["负责人", "owner", c[2]],
+              ],
+              "保存账户",
+            ),
+          );
+        }
+        if (a === "customer-notes")
+          openModal(
+            "客户备注与活动",
+            '<div class="timeline"><article><strong>续费风险较低</strong><small class="muted">Lena · 2 天前</small></article><article><strong>希望增加审计导出</strong><small class="muted">Jordan · 5 天前</small></article></div>',
+          );
+        if (a === "run-builder-test") {
+          state.builderTested = true;
+          render();
+          toast("测试执行通过");
+        }
+        if (a === "add-condition") toast("已添加条件行");
+        if (a === "add-action") toast("已添加动作行");
+        if (a === "save-automation") {
+          toast("自动化已保存并启用");
+          setTimeout(() => go("automations"), 500);
+        }
+        if (a === "confirm-plan") {
+          toast(`已确认 ${state.selectedPlan} 套餐`);
+          setTimeout(() => go("billing"), 500);
+        }
+        if (a === "invite-member")
+          openModal(
+            "邀请成员",
+            form(
+              "",
+              [
+                ["邮箱", "email"],
+                ["角色", "role", "成员"],
+              ],
+              "发送邀请",
+            ),
+          );
+        if (a === "rotate-key")
+          openModal(
+            "轮换 API 密钥",
+            '<p class="muted">旧密钥将保留 24 小时宽限期。确认后会生成新密钥。</p><div class="modal-actions"><button class="button" data-action="close-modal">取消</button><button class="button danger" data-action="confirm-rotate">确认轮换</button></div>',
+          );
+        if (a === "confirm-rotate") {
+          closeModal();
+          toast("API 密钥已轮换");
+        }
+        if (a === "create-key")
+          openModal(
+            "创建 API 密钥",
+            form(
+              "",
+              [
+                ["名称", "name"],
+                ["权限范围", "scope", "read:all"],
+              ],
+              "创建密钥",
+            ),
+          );
+        if (a === "browse-integrations") {
+          go("integrations");
+          toast("已打开集成目录");
+        }
+        if (a === "download-invoices") {
+          toast("发票打包下载已开始");
+        }
+        if (a === "save-settings") {
+          toast("设置已保存");
+        }
+        if (a === "discard-settings") {
+          render();
+          toast("已恢复上次保存的设置");
+        }
+        if (a === "show-toast") {
+          toast("示例配置已加载");
+        }
+        if (a === "choose-plan") {
+          closeModal();
+          toast("套餐变更已记录");
+        }
+        if (a === "close-modal") closeModal();
+        if (a === "toggle-workflow") {
+          const i = Number(b.dataset.index);
+          workflows[i][4] = workflows[i][4] === "PAUSED" ? "ACTIVE" : "PAUSED";
+          render();
+          toast("工作流状态已更新");
+        }
+      });
+      document.addEventListener("input", (e) => {
+        if (e.target.id === "customer-search") {
+          state.query = e.target.value;
+          const q = state.query.toLowerCase();
+          setMarkup(
+            document.querySelector("#customer-rows"),
+            customerTable(
+              customers.filter(
+                (r) =>
+                  (state.segment === "all" || r[1] === state.segment) &&
+                  r.join(" ").toLowerCase().includes(q),
+              ),
+            ),
+          );
+        }
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.id === "segment") {
+          state.segment = e.target.value;
+          render();
+        }
+        if (e.target.dataset.role) toast("成员角色已更新");
+      });
+      document.addEventListener("submit", (e) => {
+        if (e.target.id !== "modal-form") return;
+        e.preventDefault();
+        const d = Object.fromEntries(new FormData(e.target));
+        if (state.page === "customers") {
+          customers.unshift([
+            d.name,
+            d.plan || "Pro",
+            d.owner || "未分配",
+            "试用",
+            "$0",
+          ]);
+        }
+        if (state.page === "automations") {
+          workflows.unshift([d.name, d.trigger || "手动", "0", "—", "PAUSED"]);
+        }
+        if (state.page === "customerDetail") {
+          const customer = customers[state.selectedCustomer];
+          customer[0] = d.name || customer[0];
+          customer[1] = d.plan || customer[1];
+          customer[2] = d.owner || customer[2];
+        }
+        closeModal();
+        render();
+        toast(submitToast(state.page));
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+      window.addEventListener("popstate", () => {
+        const page = location.hash.slice(1);
+        if (meta[page]) {
+          state.page = page;
+          render();
+        }
+      });
+      document
+        .querySelector("#modal-backdrop")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "modal-backdrop") closeModal();
+        });
+      if (!location.hash)
+        history.replaceState({ page: state.page }, "", `#${state.page}`);
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+{
+  "id": "local-files",
+  "label": "Local files and local browser",
+  "kind": "local",
+  "endpoint": null,
+  "requirements": {
+    "cloud": false,
+    "desktopApp": false
+  },
+  "sources": [],
+  "operations": {
+    "file.create": {
+      "kind": "local",
+      "candidates": ["write"],
+      "writesDesign": false,
+      "notes": "Create HTML, SVG, Markdown, JSON, source, or asset files locally."
+    },
+    "document.inspect": {
+      "kind": "local",
+      "candidates": ["read", "design-critique"],
+      "writesDesign": false,
+      "notes": "Inspect local images, PDFs, SVG, design tokens, and source files."
+    },
+    "canvas.execute": {
+      "kind": "local",
+      "candidates": ["write", "edit", "frontend-design"],
+      "writesDesign": false,
+      "notes": "The local application or self-contained HTML is the editable design artifact."
+    },
+    "render.capture": {
+      "kind": "local",
+      "candidates": ["agent-browser"],
+      "writesDesign": false,
+      "notes": "Render localhost or a local file in Chromium and capture screenshots."
+    },
+    "asset.import": {
+      "kind": "local",
+      "candidates": ["read", "write"],
+      "writesDesign": false,
+      "notes": "Copy or embed local assets; do not upload them."
+    },
+    "asset.export": {
+      "kind": "local",
+      "candidates": ["write", "agent-browser"],
+      "writesDesign": false,
+      "notes": "Export local SVG, PNG, PDF, HTML, or source artifacts."
+    },
+    "token.read": {
+      "kind": "local",
+      "candidates": ["read", "ui-ux-pro-max"],
+      "writesDesign": false,
+      "notes": "Read CSS variables, token JSON, themes, and project conventions."
+    },
+    "token.write": {
+      "kind": "local",
+      "candidates": ["write", "edit", "ui-ux-pro-max"],
+      "writesDesign": false,
+      "notes": "Write local CSS variables or token files."
+    },
+    "component.read": {
+      "kind": "local",
+      "candidates": ["read", "building-components"],
+      "writesDesign": false,
+      "notes": "Inspect source components and Storybook stories."
+    },
+    "component.write": {
+      "kind": "local",
+      "candidates": ["write", "edit", "building-components"],
+      "writesDesign": false,
+      "notes": "Create or update source components and stories."
+    },
+    "component.map": {
+      "kind": "local",
+      "candidates": ["read", "write", "edit"],
+      "writesDesign": false,
+      "notes": "Use component imports, Storybook stories, and a local mapping document."
+    },
+    "diagram.create": {
+      "kind": "local",
+      "candidates": ["write"],
+      "writesDesign": false,
+      "notes": "Create Mermaid, SVG, or self-contained HTML locally."
+    },
+    "whiteboard.edit": {
+      "kind": "local",
+      "candidates": ["write", "edit"],
+      "writesDesign": false,
+      "notes": "Create .excalidraw, SVG, or self-contained HTML locally."
+    },
+    "slides.edit": {
+      "kind": "local",
+      "candidates": ["write", "edit"],
+      "writesDesign": false,
+      "notes": "Create Marp Markdown or self-contained HTML slides locally."
+    },
+    "motion.read": {
+      "kind": "local",
+      "candidates": ["read", "web-animation-design"],
+      "writesDesign": false,
+      "notes": "Inspect local CSS, JavaScript, video, or motion specifications."
+    },
+    "motion.write": {
+      "kind": "local",
+      "candidates": ["write", "edit", "web-animation-design"],
+      "writesDesign": false,
+      "notes": "Implement motion in local application source."
+    }
+  }
+}

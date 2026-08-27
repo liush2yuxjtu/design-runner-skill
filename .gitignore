@@ -1,0 +1,16 @@
+.DS_Store
+.design-runner.json
+node_modules/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.webm.tmp
+*.log
+.env
+.env.*
+!.env.example
+*.oauth.json

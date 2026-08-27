@@ -1,0 +1,116 @@
+{
+  "id": "ardot-desktop",
+  "label": "Tencent Design Ardot Desktop MCP",
+  "kind": "mcp",
+  "endpoint": "http://127.0.0.1:50501/api/v1/mcp",
+  "requirements": {
+    "cloud": false,
+    "desktopApp": true
+  },
+  "sources": [
+    "https://docs.ardot.tencent.com/en/ardot-mcp/introduction",
+    "https://docs.ardot.tencent.com/en/ardot-mcp/desktop-mcp.html",
+    "https://docs.ardot.tencent.com/en/ardot-client/introduction.html"
+  ],
+  "verifiedAgainst": {
+    "appVersion": "2.13.5",
+    "mcpServerVersion": "1.0.11-68125c91",
+    "verifiedAt": "2026-08-27"
+  },
+  "notes": "Port 50501 is the default and may change when occupied. First login requires network access. Live verification used a new cloud-backed draft because this MCP version does not expose design-file creation or a confirmed local-file creation tool.",
+  "operations": {
+    "file.create": {
+      "kind": "unsupported",
+      "candidates": [],
+      "writesDesign": true,
+      "notes": "MCP 1.0.11 exposes create_new_page inside an open file, not design-file creation. Create the file in Ardot UI, then reconnect MCP."
+    },
+    "document.inspect": {
+      "kind": "tool",
+      "candidates": [
+        "fetch_file_info",
+        "fetch_editor_state",
+        "batch_read",
+        "capture_layout",
+        "fetch_guidelines"
+      ],
+      "writesDesign": false
+    },
+    "canvas.execute": {
+      "kind": "tool",
+      "candidates": ["batch_edit", "locate_available_space"],
+      "writesDesign": true
+    },
+    "render.capture": {
+      "kind": "tool",
+      "candidates": ["capture_screenshot"],
+      "writesDesign": false
+    },
+    "asset.import": {
+      "kind": "tool",
+      "candidates": ["register_assets", "upload_images"],
+      "writesDesign": true
+    },
+    "asset.export": {
+      "kind": "tool",
+      "candidates": ["scan_exportable_resources", "export_nodes"],
+      "writesDesign": false
+    },
+    "token.read": {
+      "kind": "tool",
+      "candidates": ["fetch_variables", "export_variables"],
+      "writesDesign": false
+    },
+    "token.write": {
+      "kind": "tool",
+      "candidates": ["apply_variables"],
+      "writesDesign": true
+    },
+    "component.read": {
+      "kind": "tool",
+      "candidates": ["fetch_component_lib", "batch_read"],
+      "writesDesign": false
+    },
+    "component.write": {
+      "kind": "tool",
+      "candidates": ["batch_edit"],
+      "writesDesign": true
+    },
+    "component.map": {
+      "kind": "emulated",
+      "candidates": ["fetch_component_lib", "batch_read"],
+      "writesDesign": false,
+      "notes": "No native Code Connect-style mapping tool was exposed. Match Ardot component IDs to local code in project documentation or Storybook."
+    },
+    "diagram.create": {
+      "kind": "emulated",
+      "candidates": ["batch_edit", "capture_screenshot"],
+      "writesDesign": true,
+      "notes": "Build named frames, shapes, text, and lines on the design canvas; no native diagram tool was exposed."
+    },
+    "whiteboard.edit": {
+      "kind": "emulated",
+      "candidates": ["batch_edit", "capture_screenshot"],
+      "writesDesign": true,
+      "notes": "Emulate a board with canvas primitives. This is not a native FigJam-equivalent mode."
+    },
+    "slides.edit": {
+      "kind": "emulated",
+      "candidates": ["batch_edit", "capture_screenshot", "export_nodes"],
+      "writesDesign": true,
+      "notes": "Lay out slide frames on one page and export PPTX through export_nodes; no dedicated slide-authoring MCP tool was exposed."
+    },
+    "motion.read": {
+      "kind": "unsupported",
+      "candidates": [],
+      "writesDesign": false,
+      "notes": "The verified MCP tool catalog exposed no motion, animation, transition, or prototype-context tool."
+    },
+    "motion.write": {
+      "kind": "unsupported",
+      "candidates": [],
+      "writesDesign": true,
+      "notes": "The verified MCP tool catalog exposed no motion, animation, transition, or prototype-write tool."
+    }
+  }
+}

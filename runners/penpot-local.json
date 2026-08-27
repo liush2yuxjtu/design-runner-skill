@@ -1,0 +1,104 @@
+{
+  "id": "penpot-local",
+  "label": "Self-hosted Penpot with local MCP",
+  "kind": "mcp",
+  "endpoint": "http://localhost:4401/mcp",
+  "requirements": {
+    "cloud": false,
+    "desktopApp": false
+  },
+  "sources": [
+    "https://penpot.app/self-host",
+    "https://help.penpot.app/mcp/",
+    "https://github.com/penpot/penpot/tree/develop/mcp"
+  ],
+  "operations": {
+    "file.create": {
+      "kind": "unsupported",
+      "candidates": [],
+      "writesDesign": true,
+      "notes": "Current local MCP operates on the focused Penpot page; discover a file API before claiming support."
+    },
+    "document.inspect": {
+      "kind": "tool",
+      "candidates": ["high_level_overview", "execute_code", "penpot_api_info"],
+      "writesDesign": false
+    },
+    "canvas.execute": {
+      "kind": "tool",
+      "candidates": ["execute_code"],
+      "writesDesign": true
+    },
+    "render.capture": {
+      "kind": "tool",
+      "candidates": ["export_shape"],
+      "writesDesign": false
+    },
+    "asset.import": {
+      "kind": "tool",
+      "candidates": ["import_image"],
+      "writesDesign": true
+    },
+    "asset.export": {
+      "kind": "tool",
+      "candidates": ["export_shape"],
+      "writesDesign": false
+    },
+    "token.read": {
+      "kind": "tool",
+      "candidates": ["execute_code", "penpot_api_info"],
+      "writesDesign": false
+    },
+    "token.write": {
+      "kind": "tool",
+      "candidates": ["execute_code", "penpot_api_info"],
+      "writesDesign": true
+    },
+    "component.read": {
+      "kind": "tool",
+      "candidates": ["execute_code", "high_level_overview"],
+      "writesDesign": false
+    },
+    "component.write": {
+      "kind": "tool",
+      "candidates": ["execute_code", "penpot_api_info"],
+      "writesDesign": true
+    },
+    "component.map": {
+      "kind": "emulated",
+      "candidates": ["execute_code"],
+      "writesDesign": true,
+      "notes": "Align component identifiers and maintain mapping documentation; no Figma Code Connect equivalent is assumed."
+    },
+    "diagram.create": {
+      "kind": "emulated",
+      "candidates": ["execute_code"],
+      "writesDesign": true,
+      "notes": "Build diagram shapes and connectors from Penpot primitives."
+    },
+    "whiteboard.edit": {
+      "kind": "emulated",
+      "candidates": ["execute_code"],
+      "writesDesign": true,
+      "notes": "Use boards, shapes, text, and connectors; Penpot is not claimed to provide a native FigJam mode."
+    },
+    "slides.edit": {
+      "kind": "emulated",
+      "candidates": ["execute_code"],
+      "writesDesign": true,
+      "notes": "Use one board per slide; presentation semantics require separate validation."
+    },
+    "motion.read": {
+      "kind": "emulated",
+      "candidates": ["execute_code", "penpot_api_info"],
+      "writesDesign": false,
+      "notes": "Inspect prototype interactions only when the current API documents them."
+    },
+    "motion.write": {
+      "kind": "emulated",
+      "candidates": ["execute_code", "penpot_api_info"],
+      "writesDesign": true,
+      "notes": "Author only motion/prototype features confirmed by penpot_api_info."
+    }
+  }
+}

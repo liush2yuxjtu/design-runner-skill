@@ -1,0 +1,35 @@
+{
+  "skill_name": "design-runner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement this local UI screenshot as React without sending anything to Figma or another cloud.",
+      "expected_output": "Select local-files, resolve design-to-code, and keep cloud, desktop apps, and design writes denied.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Use Tencent Ardot Desktop to generate a component library from our tokens.",
+      "expected_output": "Select ardot-desktop only with explicit desktop and design-write policy, then resolve design-system through discovered MCP tools.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Make a FigJam-style project plan, but our runner is self-hosted Penpot.",
+      "expected_output": "Resolve project-plan to Penpot's documented whiteboard emulation and label it as emulated rather than claiming native FigJam support.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Switch this project from Figma to Ardot Remote and update the design.",
+      "expected_output": "Require explicit cloud and design-write permission, use live Ardot tool discovery, and never call Figma tools.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "These SaaS mocks are spread across 13 Ardot pages. Put every real screen on one Ardot page, tile them, connect page jumps and return paths with arrows, then remove the extra pages.",
+      "expected_output": "Resolve unified-product-flow, move screen roots to one existing page, replace the interaction-map page with labeled connectors, verify exactly one page remains, and export a full-page overview for QA.",
+      "files": []
+    }
+  ]
+}

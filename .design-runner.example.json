@@ -1,0 +1,8 @@
+{
+  "runner": "local-files",
+  "policy": {
+    "allowCloud": false,
+    "allowDesktopApp": false,
+    "allowDesignWrites": false
+  }
+}

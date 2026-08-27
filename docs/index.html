@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Design Runner keeps Figma-grade design workflows portable across Ardot, Penpot, Figma, and local files."
+    />
+    <meta name="theme-color" content="#07111f" />
+    <title>Design Runner · portable design workflows</title>
+    <style>
+      :root {
+        --ink: #07111f;
+        --paper: #f5f2e9;
+        --blue: #2f66ff;
+        --lime: #c8ff4d;
+        --line: rgba(7, 17, 31, 0.16);
+        --muted: #5d6876;
+        --card: rgba(255, 255, 255, 0.74);
+        --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", monospace;
+        --display: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
+        background-size: 44px 44px;
+        font-family: var(--mono);
+      }
+      a {
+        color: inherit;
+      }
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+      .skip {
+        position: fixed;
+        left: 16px;
+        top: -80px;
+        z-index: 20;
+        background: var(--lime);
+        padding: 12px;
+      }
+      .skip:focus {
+        top: 16px;
+      }
+      .shell {
+        width: min(1180px, calc(100% - 40px));
+        margin: auto;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        border-bottom: 1px solid var(--ink);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+      }
+      .mark {
+        width: 22px;
+        height: 22px;
+        background: var(--blue);
+        position: relative;
+      }
+      .mark::after {
+        content: "";
+        position: absolute;
+        inset: 6px -8px 6px 8px;
+        background: var(--lime);
+      }
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        font-size: 13px;
+      }
+      .nav-links a {
+        text-decoration: none;
+      }
+      .nav-links a:hover {
+        text-decoration: underline;
+        text-underline-offset: 5px;
+      }
+      .pill {
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        padding: 9px 14px;
+        background: var(--lime);
+        font-weight: 800;
+      }
+      .hero {
+        min-height: 690px;
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 72px;
+        align-items: center;
+      }
+      .eyebrow {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--display);
+        font-weight: 700;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(58px, 8vw, 112px);
+        line-height: 0.82;
+        letter-spacing: -0.075em;
+        margin: 28px 0 30px;
+        max-width: 800px;
+      }
+      h1 em {
+        color: var(--blue);
+        font-style: normal;
+      }
+      .lede {
+        max-width: 700px;
+        font: 20px/1.55 var(--display);
+        color: #283545;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 34px;
+      }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        border: 1px solid var(--ink);
+        text-decoration: none;
+        font-weight: 800;
+        background: var(--ink);
+        color: white;
+      }
+      .button.alt {
+        background: transparent;
+        color: var(--ink);
+      }
+      .button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--blue);
+      }
+      .terminal {
+        background: var(--ink);
+        color: #d8e2f0;
+        border: 1px solid var(--ink);
+        box-shadow: 16px 16px 0 var(--blue);
+      }
+      .terminal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #314052;
+        padding: 14px 18px;
+        color: #92a2b6;
+        font-size: 12px;
+      }
+      .dots {
+        letter-spacing: 5px;
+        color: var(--lime);
+      }
+      pre {
+        margin: 0;
+        overflow: auto;
+        padding: 24px;
+        font: 13px/1.7 var(--mono);
+        white-space: pre-wrap;
+      }
+      .copy {
+        border: 1px solid #53637a;
+        background: transparent;
+        color: white;
+        font: inherit;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+      .copy:hover,
+      .copy:focus-visible {
+        border-color: var(--lime);
+        color: var(--lime);
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border: 1px solid var(--ink);
+        background: var(--paper);
+      }
+      .metric {
+        padding: 24px;
+        border-right: 1px solid var(--ink);
+      }
+      .metric:last-child {
+        border-right: 0;
+      }
+      .metric strong {
+        display: block;
+        font: 48px/1 var(--display);
+        color: var(--blue);
+      }
+      .metric span {
+        display: block;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      section {
+        padding: 110px 0;
+      }
+      .section-head {
+        display: grid;
+        grid-template-columns: 0.72fr 1.28fr;
+        gap: 60px;
+        align-items: end;
+        margin-bottom: 48px;
+      }
+      h2 {
+        font-size: clamp(42px, 6vw, 76px);
+        line-height: 0.95;
+        letter-spacing: -0.055em;
+      }
+      .section-copy {
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 630px;
+      }
+      .flow-card {
+        background: #fff;
+        border: 1px solid var(--ink);
+        padding: 28px;
+        overflow: hidden;
+      }
+      .flow-line {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(145px, 1fr));
+        gap: 42px;
+        min-width: 900px;
+        align-items: center;
+      }
+      .flow-node {
+        position: relative;
+        border: 1px solid var(--ink);
+        padding: 18px;
+        min-height: 110px;
+        background: #fff;
+      }
+      .flow-node:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        width: 43px;
+        height: 2px;
+        background: var(--blue);
+        right: -43px;
+        top: 54px;
+      }
+      .flow-node:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        right: -43px;
+        top: 48px;
+        border-left: 12px solid var(--blue);
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        z-index: 2;
+      }
+      .flow-node b {
+        display: block;
+        margin-bottom: 18px;
+      }
+      .flow-node span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .providers {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border: 1px solid var(--ink);
+      }
+      .provider {
+        min-height: 230px;
+        padding: 24px;
+        border-right: 1px solid var(--ink);
+        background: var(--card);
+      }
+      .provider:last-child {
+        border-right: 0;
+      }
+      .provider code {
+        color: var(--blue);
+      }
+      .provider p {
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 12px;
+        margin-top: 46px;
+      }
+      .orbit {
+        background: var(--ink);
+        color: #eef4ff;
+        margin-top: 70px;
+        padding: 100px 0;
+      }
+      .orbit .section-copy {
+        color: #aebbd0;
+      }
+      .proof {
+        display: grid;
+        gap: 24px;
+      }
+      .proof img,
+      .proof video {
+        display: block;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #60708a;
+      }
+      .proof video {
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
+        background: #030912;
+      }
+      .proof-caption {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        color: #aebbd0;
+        font-size: 12px;
+      }
+      .install-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+      .install-card {
+        min-width: 0;
+        border: 1px solid var(--ink);
+        background: #fff;
+        padding: 26px;
+      }
+      .install-card h3 {
+        font-size: 28px;
+        margin-bottom: 18px;
+      }
+      .install-card pre {
+        background: #eef2f7;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        padding: 18px;
+        min-height: 152px;
+      }
+      .guard {
+        border: 1px solid var(--ink);
+        background: var(--lime);
+        padding: 34px;
+        display: grid;
+        grid-template-columns: 0.7fr 1.3fr;
+        gap: 40px;
+        align-items: center;
+      }
+      .guard h3 {
+        font-size: 36px;
+      }
+      .guard p {
+        line-height: 1.7;
+        margin: 0;
+      }
+      footer {
+        border-top: 1px solid var(--ink);
+        padding: 30px 0 50px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      @media (max-width: 900px) {
+        .hero,
+        .section-head,
+        .install-grid,
+        .guard {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          padding: 90px 0;
+          min-height: auto;
+        }
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+        }
+        .metric:nth-child(2) {
+          border-right: 0;
+        }
+        .metric:nth-child(-n + 2) {
+          border-bottom: 1px solid var(--ink);
+        }
+        .providers {
+          grid-template-columns: 1fr;
+        }
+        .provider {
+          border-right: 0;
+          border-bottom: 1px solid var(--ink);
+          min-height: auto;
+        }
+        .provider:last-child {
+          border-bottom: 0;
+        }
+        .provider p {
+          margin-top: 18px;
+        }
+      }
+      @media (max-width: 620px) {
+        .nav-links a:not(.pill) {
+          display: none;
+        }
+        h1 {
+          font-size: 62px;
+        }
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+        .metric,
+        .metric:nth-child(2) {
+          border-right: 0;
+          border-bottom: 1px solid var(--ink);
+        }
+        .metric:last-child {
+          border-bottom: 0;
+        }
+        section {
+          padding: 78px 0;
+        }
+        .proof-caption {
+          display: block;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .button:hover {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="shell nav">
+      <a class="brand" href="#top" aria-label="Design Runner home"
+        ><span class="mark" aria-hidden="true"></span>DESIGN RUNNER</a
+      >
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#workflow">Workflow</a><a href="#orbit">Orbit proof</a
+        ><a href="#install">Install</a>
+        <a
+          class="pill"
+          href="https://github.com/liush2yuxjtu/design-runner-skill"
+          >GitHub</a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="shell hero" id="top">
+        <div>
+          <div class="eyebrow">portable design operations</div>
+          <h1>Keep the workflow.<br /><em>Swap the runner.</em></h1>
+          <p class="lede">
+            Design Runner maps one design process to Ardot, Penpot, Figma, or
+            local files. Cloud access, desktop apps, and write operations stay
+            blocked until policy allows them.
+          </p>
+          <div class="actions">
+            <a class="button" href="#install">Install the skill</a
+            ><a class="button alt" href="#orbit">Watch Orbit demo</a>
+          </div>
+        </div>
+        <div class="terminal" aria-label="Command example">
+          <div class="terminal-head">
+            <span class="dots">● ● ●</span><span>unified-product-flow</span
+            ><button
+              class="copy"
+              data-copy="python3 ~/.agents/skills/design-runner/scripts/runner.py resolve unified-product-flow"
+            >
+              Copy
+            </button>
+          </div>
+          <pre><span style="color:#c8ff4d">$</span> python3 runner.py resolve \
+  unified-product-flow
+
+runner=ardot-remote
+workflow=unified-product-flow
+
+DOCUMENT_INSPECT  [tool]
+CANVAS_EXECUTE    [tool]
+RENDER_CAPTURE    [tool]
+ASSET_EXPORT      [optional]
+
+<span style="color:#c8ff4d">OK · policy checked</span></pre>
+        </div>
+      </section>
+      <div class="shell metrics" aria-label="Project facts">
+        <div class="metric"><strong>5</strong><span>runner profiles</span></div>
+        <div class="metric">
+          <strong>15</strong><span>portable workflows</span>
+        </div>
+        <div class="metric"><strong>8</strong><span>resolver tests</span></div>
+        <div class="metric">
+          <strong>0</strong><span>silent fallbacks</span>
+        </div>
+      </div>
+      <section class="shell" id="workflow">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">one process</div>
+            <h2>Provider names stay out of the plan.</h2>
+          </div>
+          <p class="section-copy">
+            Workflows request capabilities. Runner manifests map those
+            capabilities to live tools. Missing support stays missing, instead
+            of quietly sending work to another provider.
+          </p>
+        </div>
+        <div
+          class="flow-card"
+          tabindex="0"
+          aria-label="Portable workflow sequence"
+        >
+          <div class="flow-line">
+            <div class="flow-node">
+              <b>Inspect</b
+              ><span>Read document, screens, tokens, and components.</span>
+            </div>
+            <div class="flow-node">
+              <b>Resolve</b
+              ><span>Match required capabilities to the selected runner.</span>
+            </div>
+            <div class="flow-node">
+              <b>Execute</b
+              ><span>Edit in bounded batches with explicit write policy.</span>
+            </div>
+            <div class="flow-node">
+              <b>Capture</b
+              ><span>Check layout, pixels, clipping, and connectors.</span>
+            </div>
+            <div class="flow-node">
+              <b>Verify</b
+              ><span>Export the real target and leave local evidence.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="shell" style="padding-top: 20px">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">runner catalog</div>
+            <h2>Local first. Remote by permission.</h2>
+          </div>
+          <p class="section-copy">
+            The default runner writes local files and denies cloud access.
+            Remote providers require explicit policy changes.
+          </p>
+        </div>
+        <div class="providers">
+          <article class="provider">
+            <code>local-files</code>
+            <p>HTML, SVG, source, and Chromium QA. Safe default.</p>
+          </article>
+          <article class="provider">
+            <code>penpot-local</code>
+            <p>Self-hosted Penpot without a cloud requirement.</p>
+          </article>
+          <article class="provider">
+            <code>ardot-remote</code>
+            <p>GUI-free Ardot MCP after browser OAuth. Uses Ardot Cloud.</p>
+          </article>
+          <article class="provider">
+            <code>ardot-desktop</code>
+            <p>Desktop profile. Disabled until policy allows the app.</p>
+          </article>
+          <article class="provider">
+            <code>figma-remote</code>
+            <p>Remote Figma adapter with explicit cloud and write policy.</p>
+          </article>
+        </div>
+      </section>
+      <section class="orbit" id="orbit">
+        <div class="shell">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow" style="color: #c8ff4d">Orbit SaaS proof</div>
+              <h2>Thirteen pages went in. One canvas came out.</h2>
+            </div>
+            <p class="section-copy">
+              The workflow kept twelve product screens, tiled them at original
+              size, drew eleven route connectors, removed the abstract
+              interaction-map page, and deleted every empty source page.
+            </p>
+          </div>
+          <div class="proof">
+            <img
+              src="assets/orbit-unified-flow.png"
+              alt="Orbit SaaS twelve-screen unified Ardot product flow"
+              width="2640"
+              height="503"
+            /><video
+              controls
+              muted
+              playsinline
+              preload="metadata"
+              poster="assets/orbit-unified-flow.png"
+            >
+              <source src="assets/orbit-saas-demo.webm" type="video/webm" />
+              Your browser does not support WebM video.
+            </video>
+            <div class="proof-caption">
+              <span
+                >Real Ardot export · 1 page · 12 screens · 11 connectors</span
+              ><a href="orbit/">Open interactive prototype</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="shell" id="install">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">installation</div>
+            <h2>Clone once. Pick a runner per project.</h2>
+          </div>
+          <p class="section-copy">
+            The repository root is the Skill. Extra folders contain the Pi
+            extension, tests, documentation, and the Orbit example.
+          </p>
+        </div>
+        <div class="install-grid">
+          <article class="install-card">
+            <h3>Safe local mode</h3>
+            <pre>
+git clone \
+  https://github.com/liush2yuxjtu/design-runner-skill.git \
+  ~/.agents/skills/design-runner
+
+python3 ~/.agents/skills/design-runner/\
+scripts/runner.py check</pre>
+          </article>
+          <article class="install-card">
+            <h3>Ardot Remote in Pi</h3>
+            <pre>
+python3 runner.py use ardot-remote \
+  --project . \
+  --cloud allow \
+  --desktop deny \
+  --design-writes allow
+
+/design-mcp connect ardot-remote</pre>
+          </article>
+        </div>
+      </section>
+      <section class="shell" style="padding-top: 0">
+        <div class="guard">
+          <h3>Fail closed means no surprise provider calls.</h3>
+          <p>
+            Unknown tools count as write-capable. Remote runners cannot start
+            without cloud permission. Desktop profiles cannot start without
+            desktop permission. Missing capabilities stop the workflow.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="shell footer-row">
+        <span
+          >MIT ·
+          <a href="https://github.com/liush2yuxjtu/design-runner-skill"
+            >GitHub source</a
+          ></span
+        ><span
+          >Source project: design-runner-skill ·
+          /Users/liushiyuwin/projects/design-runner-skill · Pi session:
+          01a04127-b179-79c5-99cb-235b8fa6a690</span
+        >
+      </div>
+    </footer>
+    <script>
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(button.dataset.copy);
+          const before = button.textContent;
+          button.textContent = "Copied";
+          setTimeout(() => {
+            button.textContent = before;
+          }, 1200);
+        });
+      });
+    </script>
+  </body>
+</html>

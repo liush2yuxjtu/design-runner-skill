@@ -1,0 +1,13 @@
+{
+  "name": "orbit-saas-ui-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "discover": "node record-demo.mjs --discover",
+    "rehearse": "node record-demo.mjs --rehearse",
+    "record": "node record-demo.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
